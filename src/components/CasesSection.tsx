@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { getCases } from '../sanity/utils';
-import type { Case, LocaleString, LocaleText } from '../sanity/types';
+import type { Case, LocaleString, LocaleText } from '@/sanity/types';
 import Image from 'next/image';
 import PageHeader from './PageHeader';
 

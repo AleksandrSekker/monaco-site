@@ -1,4 +1,4 @@
-import { getPosts } from '../../../src/sanity/queries';
+import { getPosts } from '@/../../src/sanity/queries';
 import Image from 'next/image';
 import Link from 'next/link';
 

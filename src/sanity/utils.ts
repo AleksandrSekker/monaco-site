@@ -1,6 +1,6 @@
 import { groq } from 'next-sanity';
 import { client } from './client';
-import type { Case, PricingTier, LocaleString, LocaleText } from './types';
+import type { Case, PricingTier, LocaleString, LocaleText } from '@/sanity/types';
 
 type LocalizedCase = Omit<Case, 'title' | 'description'> & {
   title: string;
