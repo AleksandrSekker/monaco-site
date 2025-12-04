@@ -143,29 +143,84 @@ async function createContent() {
     const cases = [
       {
         _type: 'case',
-        title: 'Клиент А. — 1,2 млн $ в USDT',
-        result: 'Счёт в Монако + карта Infinite за 28 дней',
-        details:
-          'Клиент с криптовалютным капиталом и резидентством вне ЕС. Подготовка полного KYC-досье, выбор банка и провайдера крипто-ввода, сопровождение до выпуска карт.',
-        duration: '28 дней',
-        order: 1,
+        title: {
+          en: 'Client A — $1.2M in USDT',
+          ru: 'Клиент А. — 1,2 млн $ в USDT',
+        },
+        slug: {
+          _type: 'slug',
+          current: 'client-a-crypto-account',
+        },
+        description: {
+          en: 'Monaco account + Infinite card in 28 days',
+          ru: 'Счёт в Монако + карта Infinite за 28 дней',
+        },
+        content: [
+          {
+            _type: 'block',
+            children: [
+              {
+                _type: 'span',
+                text: 'Клиент с криптовалютным капиталом и резидентством вне ЕС. Подготовка полного KYC-досье, выбор банка и провайдера крипто-ввода, сопровождение до выпуска карт.',
+              },
+            ],
+          },
+        ],
+        publishedAt: new Date().toISOString(),
       },
       {
         _type: 'case',
-        title: 'Семья Б. — кредит 4 млн €',
-        result: 'Кредитная линия под залог недвижимости в Дубае',
-        details:
-          'Структурирование залога, подбор банка в ЕС, согласование условий кредитования, сопровождение юридической части и оценки недвижимости.',
-        duration: '45 дней',
-        order: 2,
+        title: {
+          en: 'Family B — €4M loan',
+          ru: 'Семья Б. — кредит 4 млн €',
+        },
+        slug: {
+          _type: 'slug',
+          current: 'family-b-property-loan',
+        },
+        description: {
+          en: 'Credit line secured by Dubai real estate',
+          ru: 'Кредитная линия под залог недвижимости в Дубае',
+        },
+        content: [
+          {
+            _type: 'block',
+            children: [
+              {
+                _type: 'span',
+                text: 'Структурирование залога, подбор банка в ЕС, согласование условий кредитования, сопровождение юридической части и оценки недвижимости.',
+              },
+            ],
+          },
+        ],
+        publishedAt: new Date().toISOString(),
       },
       {
         _type: 'case',
-        title: 'Компания В. — оборотный счёт и приём криптовалюты',
-        result: 'Комплексное решение для B2B-платежей',
-        details:
-          'Настройка счёта в европейском банке и платёжном провайдере, интеграция приёма криптовалюты с бизнес-процессами компании, комплаенс-поддержка.',
-        order: 3,
+        title: {
+          en: 'Company C — current account and crypto payments',
+          ru: 'Компания В. — оборотный счёт и приём криптовалюты',
+        },
+        slug: {
+          _type: 'slug',
+          current: 'company-c-crypto-payments',
+        },
+        description: {
+          en: 'Comprehensive B2B payment solution',
+          ru: 'Комплексное решение для B2B-платежей',
+        },
+        content: [
+          {
+            _type: 'block',
+            children: [
+              {
+                _type: 'span',
+                text: 'Настройка счёта в европейском банке и платёжном провайдере, интеграция приёма криптовалюты с бизнес-процессами компании, комплаенс-поддержка.',
+              },
+            ],
+          },
+        ],
+        publishedAt: new Date().toISOString(),
       },
     ];
 

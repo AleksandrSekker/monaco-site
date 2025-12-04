@@ -130,8 +130,8 @@ export default function PricingSection() {
                       })}{' '}
                       {investmentRange ? (
                         <>
-                          {investmentRange.min ? formatCurrency(investmentRange.min, false) : ''}
-                          {investmentRange.max ? `–${formatCurrency(investmentRange.max, false)}` : '+'} €
+                          {investmentRange.min ? <>{formatCurrency(investmentRange.min, false)}</> : null}
+                          {investmentRange.max ? <>{`–${formatCurrency(investmentRange.max, false)}`}</> : '+'} €
                         </>
                       ) : (
                         <span className="text-red-600">Contact us</span>
@@ -139,15 +139,17 @@ export default function PricingSection() {
                     </p>
                     <p className="mt-3 text-2xl font-semibold text-red-600">
                       {tier.isCustomFee ? (
-                        getLocalizedText({
-                          en: 'Custom pricing',
-                          ru: 'Индивидуально',
-                          fr: 'Sur devis',
-                        })
+                        <>
+                          {getLocalizedText({
+                            en: 'Custom pricing',
+                            ru: 'Индивидуально',
+                            fr: 'Sur devis',
+                          })}
+                        </>
                       ) : feeRange ? (
                         <>
-                          {feeRange.min ? formatCurrency(feeRange.min, false) : ''}
-                          {feeRange.max ? `–${formatCurrency(feeRange.max, false)}` : '+'} €
+                          {feeRange.min ? <>{formatCurrency(feeRange.min, false)}</> : null}
+                          {feeRange.max ? <>{`–${formatCurrency(feeRange.max, false)}`}</> : '+'} €
                         </>
                       ) : (
                         <span className="text-sm">Contact us</span>
@@ -189,8 +191,8 @@ export default function PricingSection() {
                 <p className="mt-2 text-sm font-semibold text-red-600">
                   {tier.feeRange ? (
                     <>
-                      {tier.feeRange.min ? formatCurrency(tier.feeRange.min, false) : ''}
-                      {tier.feeRange.max ? `–${formatCurrency(tier.feeRange.max, false)}` : '+'} €
+                      {tier.feeRange.min ? <>{formatCurrency(tier.feeRange.min, false)}</> : null}
+                      {tier.feeRange.max ? <>{`–${formatCurrency(tier.feeRange.max, false)}`}</> : '+'} €
                     </>
                   ) : (
                     'Contact us'
