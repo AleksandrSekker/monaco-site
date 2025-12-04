@@ -1,12 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "buildCommand": "bash vercel-build.sh"
-      }
-    }
-  ]
+  "builds": [{ "src": "package.json", "use": "@vercel/next" }],
+  "buildCommand": "bash vercel-build.sh",
+  "installCommand": "echo 'Skipping install, handled in build command'"
 }

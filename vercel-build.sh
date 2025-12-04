@@ -11,6 +11,12 @@ cd ..
 echo "Installing root dependencies..."
 npm ci --no-audit --prefer-offline
 
+# Build Sanity Studio
+echo "Building Sanity Studio..."
+cd sanity
+npm run build
+cd ..
+
 # Build Next.js
 echo "Building Next.js application..."
 npm run build
