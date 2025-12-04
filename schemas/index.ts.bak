@@ -1,0 +1,177 @@
+// Import all schema files
+import hero from './hero';
+import service from './service';
+
+// Export all schemas as an array
+export default [
+  hero,
+  service
+];
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'fee',
+    type: 'string',
+    title: 'Fee',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'description',
+    type: 'text',
+    title: 'Description',
+  },
+  {
+    name: 'highlight',
+    type: 'text',
+    title: 'Highlight',
+  },
+  {
+    name: 'order',
+    type: 'number',
+    title: 'Order',
+    validation: (rule) => rule.required().min(0),
+  },
+]);
+
+// Case Study
+export const caseStudy = createDocumentSchema('case', 'Case Study', [
+  {
+    name: 'title',
+    type: 'string',
+    title: 'Title',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'result',
+    type: 'string',
+    title: 'Result',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'details',
+    type: 'text',
+    title: 'Details',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'duration',
+    type: 'string',
+    title: 'Duration',
+  },
+  {
+    name: 'order',
+    type: 'number',
+    title: 'Order',
+    validation: (rule) => rule.required().min(0),
+  },
+]);
+
+// Blog Post
+export const blogPost = createDocumentSchema('blogPost', 'Blog Post', [
+  {
+    name: 'title',
+    type: 'string',
+    title: 'Title',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'slug',
+    type: 'slug',
+    title: 'Slug',
+    options: {
+      source: 'title',
+      maxLength: 96,
+    },
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'description',
+    type: 'text',
+    title: 'Description',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'content',
+    type: 'array',
+    title: 'Content',
+    of: [{ type: 'block' }],
+  },
+  {
+    name: 'publishedAt',
+    type: 'datetime',
+    title: 'Published At',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'image',
+    type: 'image',
+    title: 'Image',
+    options: {
+      hotspot: true,
+    },
+  },
+]);
+
+// About Page
+export const about = createDocumentSchema('about', 'About Page', [
+  {
+    name: 'title',
+    type: 'string',
+    title: 'Title',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'description',
+    type: 'text',
+    title: 'Description',
+    validation: (rule) => rule.required(),
+  },
+  {
+    name: 'stats',
+    type: 'array',
+    title: 'Stats',
+    of: [
+      {
+        type: 'object',
+        fields: [
+          { name: 'label', type: 'string', title: 'Label' },
+          { name: 'value', type: 'string', title: 'Value' },
+          { name: 'subtext', type: 'string', title: 'Subtext' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'content',
+    type: 'array',
+    title: 'Content',
+    of: [{ type: 'block' }],
+  },
+]);
+
+// Contact Information
+export const contact = createDocumentSchema('contact', 'Contact Information', [
+  {
+    name: 'telegram',
+    type: 'url',
+    title: 'Telegram URL',
+  },
+  {
+    name: 'whatsapp',
+    type: 'url',
+    title: 'WhatsApp URL',
+  },
+  {
+    name: 'phone',
+    type: 'string',
+    title: 'Phone',
+  },
+  {
+    name: 'email',
+    type: 'email',
+    title: 'Email',
+  },
+]);
+
+// Export all schemas as an array
+export const schemas = [hero, service, pricingTier, caseStudy, blogPost, about, contact];

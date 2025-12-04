@@ -1,0 +1,18 @@
+# Ignore build and generated directories
+.next/
+node_modules/
+dist/
+build/
+
+# Ignore TypeScript and JavaScript files in these directories
+**/__tests__/**
+**/__mocks__/**
+**/*.d.ts
+
+# Ignore Sanity build artifacts
+.sanity/
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.sublime-*
