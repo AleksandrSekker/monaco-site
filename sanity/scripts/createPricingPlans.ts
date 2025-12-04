@@ -1,5 +1,5 @@
 // sanity/scripts/createPricingPlans.ts
-import {createClient} from 'next-sanity'
+import createClient from '@sanity/client'
 import {v4 as uuidv4} from 'uuid'
 import * as dotenv from 'dotenv'
 import path from 'path'
