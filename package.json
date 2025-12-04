@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "build": "next build --webpack --no-sanity-build",
     "start": "next start",
     "lint": "eslint",
     "studio": "cd sanity && sanity start --port 3333",
@@ -23,6 +23,8 @@
   "devDependencies": {
     "@sanity/cli": "^4.3.0",
     "@sanity/schema": "^4.19.0",
+    "@sanity/structure": "^2.36.2",
+    "@sanity/vision": "^4.20.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.25",
     "@types/react": "^19",

@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
   },
   // Add TypeScript page extensions
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  // Add this to ignore the sanity config
+  experimental: {
+    externalDir: true,
+  },
 };
 
 export default nextConfig;
