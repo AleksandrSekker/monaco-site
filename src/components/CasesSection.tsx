@@ -2,8 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCases } from '@/lib/sanity/utils';
-import type { Case, LocaleString, LocaleText } from '@/lib/sanity/types';
+import { getCases } from '@/sanity/utils';
+import type { Case, LocaleString, LocaleText } from '@/sanity/types';
 import Image from 'next/image';
 import PageHeader from './PageHeader';
 

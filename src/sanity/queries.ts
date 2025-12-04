@@ -1,5 +1,6 @@
+// src/sanity/queries.ts
 import { groq } from 'next-sanity';
-import { client } from '@/sanity/client';
+import { client } from './client';
 
 export async function getPosts() {
   return client.fetch(groq`

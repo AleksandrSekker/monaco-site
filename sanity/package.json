@@ -16,8 +16,7 @@
   ],
   "dependencies": {
     "@sanity/client": "^7.13.1",
-    "@sanity/core": "^2.36.2",
-    "@sanity/image-url": "^1.2.0",
+    "@sanity/image-url": "^2.0.2",
     "@sanity/structure": "^2.36.2",
     "@sanity/vision": "^4.20.3",
     "react": "^19.1",
@@ -26,7 +25,10 @@
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
+    "@sanity/cli": "^4.20.3",
+    "@sanity/core": "^2.36.2",
     "@sanity/eslint-config-studio": "^5.0.2",
+    "@sanity/types": "^4.20.3",
     "@types/dotenv": "^6.1.1",
     "@types/react": "^19.1",
     "eslint": "^9.28",

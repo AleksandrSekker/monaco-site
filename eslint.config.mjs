@@ -6,6 +6,22 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    files: ['sanity/scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    env: {
+      node: true,
+    },
+  },
+  {
     ignores: [
       // Default ignores from eslint-config-next:
       '.next/**',

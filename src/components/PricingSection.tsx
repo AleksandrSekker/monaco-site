@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import type { PricingTier } from '@/lib/sanity/types';
-import { getPricingTiers } from '@/lib/sanity/utils';
-import { getLocalizedText } from '@/lib/i18n';
+import { getPricingTiers, type LocalizedPricingTier } from '../sanity/utils';
+import { getLocalizedText } from '../lib/i18n';
 
 export default function PricingSection() {
-  const [pricingTiers, setPricingTiers] = useState<PricingTier[]>([]);
+  const [pricingTiers, setPricingTiers] = useState<LocalizedPricingTier[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +55,7 @@ export default function PricingSection() {
 
   // Sort tiers by tier type for consistent order using useMemo
   const sortedTiers = useMemo(() => {
-    const tierOrder = { essential: 1, premium: 2, familyOffice: 3, crypto: 4 };
+    const tierOrder: Record<string, number> = { essential: 1, premium: 2, familyOffice: 3, crypto: 4 };
     return [...pricingTiers].sort((a, b) => (tierOrder[a.tier] || 0) - (tierOrder[b.tier] || 0));
   }, [pricingTiers]);
 
@@ -175,7 +174,7 @@ export default function PricingSection() {
         <div className="mt-8 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
           {sortedTiers
             .filter((tier) => tier.tier === 'crypto')
-            .map((tier) => (
+            .map((tier: LocalizedPricingTier) => (
               <div
                 key={tier._id}
                 className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-xs text-slate-700"
