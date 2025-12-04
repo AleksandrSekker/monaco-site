@@ -2,9 +2,17 @@
 set -e
 
 # Install Sanity dependencies
+echo "Installing Sanity dependencies..."
 cd sanity
-npm ci
+npm ci --no-audit --prefer-offline
 cd ..
 
+# Install root dependencies
+echo "Installing root dependencies..."
+npm ci --no-audit --prefer-offline
+
 # Build Next.js
+echo "Building Next.js application..."
 npm run build
+
+echo "Build completed successfully!"
