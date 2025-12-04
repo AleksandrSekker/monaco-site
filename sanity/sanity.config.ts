@@ -1,5 +1,5 @@
-import {defineConfig} from 'sanity'
-import {structureTool} from 'sanity/structure'
+import {defineConfig} from 'sanity/desk'
+import {structureTool} from 'sanity/desk'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
 
