@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import type { PricingTier } from '../lib/sanity/types';
-import { getPricingTiers } from '../lib/sanity/utils';
+import type { PricingTier } from '@/lib/sanity/types';
+import { getPricingTiers } from '@/lib/sanity/utils';
 import { getLocalizedText } from '@/lib/i18n';
 
 export default function PricingSection() {

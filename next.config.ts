@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import path from 'path';
 
 const nextConfig: NextConfig = {
   images: {
@@ -13,8 +14,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Add webpack configuration to handle Sanity modules
+  // Add webpack configuration to handle Sanity modules and path aliases
   webpack: (config, { isServer }) => {
+    // Handle path aliases
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, 'src'),
+      '@/sanity': path.resolve(__dirname, 'sanity'),
+    };
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -27,7 +35,7 @@ const nextConfig: NextConfig = {
   },
   // Add TypeScript page extensions
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
-  // Add this to ignore the sanity config
+  // Enable experimental features
   experimental: {
     externalDir: true,
   },
