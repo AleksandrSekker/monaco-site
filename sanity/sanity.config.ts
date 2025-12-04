@@ -1,4 +1,4 @@
-// sanity.config.ts
+// sanity/sanity.config.ts
 import {defineConfig} from 'sanity'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
