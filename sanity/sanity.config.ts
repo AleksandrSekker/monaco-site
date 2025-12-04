@@ -2,14 +2,14 @@
 import {defineConfig} from 'sanity'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
-import {deskTool} from 'sanity/desk'
+import {structureTool} from 'sanity/structure'
 
 export default defineConfig({
   name: 'default',
   title: 'monaco-site',
   projectId: 'bzqr2t71',
   dataset: 'production',
-  plugins: [deskTool(), visionTool()],
+  plugins: [structureTool(), visionTool()],
   schema: {
     types: schemaTypes,
   },
