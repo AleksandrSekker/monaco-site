@@ -95,10 +95,19 @@ export interface BlogPost {
   slug: {
     current: string;
   };
-  description: string;
+  description?: string;
   content?: import('@portabletext/types').PortableTextBlock[];
   publishedAt: string;
   image?: string;
+  excerpt?: string;
+  author?: {
+    name: string;
+    image?: string;
+  };
+  categories?: Array<{
+    title: string;
+    description?: string;
+  }>;
 }
 
 export interface About {

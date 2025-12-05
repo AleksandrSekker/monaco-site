@@ -1,4 +1,5 @@
-import { getPosts } from '@/sanity/queries';
+import { getBlogPosts } from '@/lib/sanity/utils';
+import type { BlogPost } from '@/lib/sanity/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,37 +11,8 @@ type I18nString = {
   [key: string]: string | undefined; // For any other potential languages
 };
 
-interface Post {
-  _id: string;
-  title: I18nString | string;
-  slug: { current: string };
-  excerpt: I18nString | string;
-  mainImage?: {
-    asset: {
-      _ref: string;
-    };
-  };
-  publishedAt: string;
-  author?: {
-    name: string;
-    image?: {
-      asset: {
-        _ref: string;
-        _type: string;
-        url: string;
-      };
-      _type: 'image';
-      alt?: string;
-    };
-  };
-  categories?: Array<{
-    title: string;
-    description?: string;
-  }>;
-}
-
 export default async function BlogPage() {
-  const posts = await getPosts();
+  const posts = await getBlogPosts();
 
   // Helper function to get the current language string
   const getLocalizedString = (content: I18nString | string, lang: string = 'en'): string => {
@@ -58,10 +30,10 @@ export default async function BlogPage() {
       </div>
 
       <div className="mx-auto mt-16 grid max-w-2xl auto-rows-fr grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        {posts.map((post: Post) => {
-          const imageUrl = post.mainImage
-            ? `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/production/${post.mainImage.asset._ref.split('-')[1]}-${post.mainImage.asset._ref.split('-')[2]}.${post.mainImage.asset._ref.split('-')[3]}`
-            : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
+        {posts.map((post: BlogPost) => {
+          const imageUrl =
+            post.image ||
+            'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
 
           return (
             <article
@@ -106,8 +78,8 @@ export default async function BlogPage() {
                 {post.author?.image && (
                   <div className="relative h-10 w-10">
                     <Image
-                      src={post.author.image.asset.url}
-                      alt={post.author.name}
+                      src={post.author.image}
+                      alt={post.author.name || 'Author'}
                       className="rounded-full bg-gray-800"
                       fill
                       sizes="40px"

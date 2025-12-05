@@ -12,15 +12,24 @@ import type {
   LocalizedPricingTier,
 } from './types';
 
+export interface I18nString {
+  _type: 'i18nString';
+  en: string;
+  ru?: string;
+  fr?: string;
+  [key: string]: string | undefined; // For any other languages
+}
 // Helper function to handle i18n strings
-function getLocalizedString(content: string | LocaleString | LocaleText | undefined, locale: string = 'en'): string {
+function getLocalizedString(
+  content: string | LocaleString | LocaleText | I18nString | undefined,
+  lang: string = 'en',
+): string {
   if (!content) return '';
   if (typeof content === 'string') return content;
-  if ('_type' in content) {
-    const localizedContent = content as { [key: string]: string };
-    return localizedContent[locale] || localizedContent['en'] || '';
-  }
-  return '';
+
+  // Handle all object types with language keys
+  const localizedContent = content as { [key: string]: string | undefined };
+  return localizedContent[lang] || localizedContent.en || '';
 }
 import {
   heroQuery,

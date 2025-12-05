@@ -35,15 +35,6 @@ export const casesQuery = `*[_type == "case"] | order(order asc) {
   }
 }`;
 
-export const blogPostsQuery = `*[_type == "post"] | order(publishedAt desc) {
-  _id,
-  title,
-  "slug": slug.current,
-  description,
-  publishedAt,
-  "image": mainImage.asset->url
-}`;
-
 export const blogPostQuery = `*[_type == "post" && slug.current == $slug][0] {
   _id,
   title,
@@ -52,6 +43,23 @@ export const blogPostQuery = `*[_type == "post" && slug.current == $slug][0] {
   content,
   publishedAt,
   "image": mainImage.asset->url
+}`;
+
+export const blogPostsQuery = `*[_type == "post"] | order(publishedAt desc) {
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  "mainImage": mainImage.asset->url,
+  publishedAt,
+  "author": author->{
+    name,
+    "image": image.asset->url
+  },
+  "categories": categories[]->{
+    title,
+    description
+  }
 }`;
 
 export const contactQuery = `*[_type == "contact"][0] {

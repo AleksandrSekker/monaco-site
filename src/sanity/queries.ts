@@ -35,3 +35,19 @@ export async function getPostBySlug(slug: string) {
     { slug },
   );
 }
+export const blogPostsQuery = `*[_type == "post"] | order(publishedAt desc) {
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  "mainImage": mainImage.asset->url,
+  publishedAt,
+  "author": author->{
+    name,
+    "image": image.asset->url
+  },
+  "categories": categories[]->{
+    title,
+    description
+  }
+}`;
