@@ -1,7 +1,7 @@
 // src/sanity/types.ts
 import type { PortableTextBlock } from '@portabletext/types';
 
-export interface LocaleString {
+interface LocaleString {
   _type: 'localeString';
   en: string;
   ru?: string;
@@ -9,7 +9,7 @@ export interface LocaleString {
   [key: string]: string | undefined;
 }
 
-export interface LocaleText {
+interface LocaleText {
   _type: 'localeText';
   en: string;
   ru?: string;
@@ -17,7 +17,7 @@ export interface LocaleText {
   [key: string]: string | undefined;
 }
 
-export interface Case {
+interface Case {
   _id: string;
   _type: 'case';
   title: LocaleString | string;
@@ -42,7 +42,7 @@ export interface Case {
   duration?: string;
 }
 
-export interface PricingTier {
+interface PricingTier {
   _id: string;
   _type: 'pricing';
   tier: 'essential' | 'premium' | 'familyOffice' | 'crypto';
@@ -64,4 +64,5 @@ export interface PricingTier {
   isPopular: boolean;
 }
 
-// Add other types as needed
+// Export all types
+export type { Case, LocaleString, LocaleText, PricingTier };
