@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { getPricingTiers } from '@/sanity/utils';
-import type { PricingTier } from '@/sanity/types';
-import { getLocalizedText } from '../lib/i18n';
+import { getPricingTiers } from '../lib/sanity/utils';
+import type { PricingTier } from '../lib/sanity/types';
 
 interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
   title: string;
