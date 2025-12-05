@@ -91,22 +91,22 @@ export interface Case {
 
 export interface BlogPost {
   _id: string;
-  title: string;
+  title: string | LocaleString;
   slug: {
     current: string;
   };
   description?: string;
+  excerpt?: string | LocaleString;
+  mainImage?: string;
   content?: import('@portabletext/types').PortableTextBlock[];
   publishedAt: string;
-  image?: string;
-  excerpt?: string;
   author?: {
     name: string;
     image?: string;
   };
   categories?: Array<{
-    title: string;
-    description?: string;
+    title: string | LocaleString;
+    description?: string | LocaleString;
   }>;
 }
 

@@ -20,16 +20,24 @@ export interface I18nString {
   [key: string]: string | undefined; // For any other languages
 }
 // Helper function to handle i18n strings
-function getLocalizedString(
-  content: string | LocaleString | LocaleText | I18nString | undefined,
+export function getLocalizedString(
+  content:
+    | string
+    | LocaleString
+    | LocaleText
+    | I18nString
+    | { en: string; [key: string]: string | undefined }
+    | undefined,
   lang: string = 'en',
 ): string {
   if (!content) return '';
   if (typeof content === 'string') return content;
 
-  // Handle all object types with language keys
+  // Handle both I18nString (with _type) and plain objects
   const localizedContent = content as { [key: string]: string | undefined };
-  return localizedContent[lang] || localizedContent.en || '';
+
+  // Try the requested language, then English, then the first available language
+  return localizedContent[lang] || localizedContent.en || Object.values(localizedContent)[0] || '';
 }
 import {
   heroQuery,
@@ -68,19 +76,32 @@ export async function getServices(): Promise<Service[]> {
 
 export async function getPricingTiers(locale: string = 'en'): Promise<LocalizedPricingTier[]> {
   if (!isSanityConfigured || !client) {
+    console.warn('Sanity client is not configured');
     return [];
   }
   try {
+    console.log('Fetching pricing tiers from Sanity...');
     const pricingTiers = await client.fetch<PricingTier[]>(pricingQuery);
-    return pricingTiers.map((tier) => ({
-      ...tier,
-      title: getLocalizedString(tier.title, locale),
-      description: getLocalizedString(tier.description, locale),
-      features: tier.features.map((feature) => ({
-        text: getLocalizedString(feature.text, locale),
-        included: feature.included,
-      })),
-    }));
+    console.log('Raw pricing tiers from Sanity:', pricingTiers);
+
+    if (!pricingTiers || !Array.isArray(pricingTiers)) {
+      console.warn('No pricing tiers found or invalid data format');
+      return [];
+    }
+
+    return pricingTiers.map((tier) => {
+      console.log('Processing tier:', tier._id, tier.tier);
+
+      return {
+        ...tier,
+        title: getLocalizedString(tier.title, locale),
+        description: getLocalizedString(tier.description, locale),
+        features: (tier.features || []).map((feature) => ({
+          text: getLocalizedString(feature?.text, locale) || '',
+          included: feature?.included ?? false,
+        })),
+      };
+    });
   } catch (error) {
     console.error('Error fetching pricing tiers:', error);
     return [];

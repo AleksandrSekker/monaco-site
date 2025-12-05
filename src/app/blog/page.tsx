@@ -1,5 +1,5 @@
 import { getBlogPosts } from '../../lib/sanity/utils';
-import type { BlogPost } from '../../lib/sanity/types';
+import type { BlogPost, LocaleString } from '../../lib/sanity/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -15,7 +15,7 @@ export default async function BlogPage() {
   const posts = await getBlogPosts();
 
   // Helper function to get the current language string
-  const getLocalizedString = (content: I18nString | string, lang: string = 'en'): string => {
+  const getLocalizedString = (content: I18nString | LocaleString | string, lang: string = 'en'): string => {
     if (typeof content === 'string') return content;
     return content[lang] || content.en || '';
   };
@@ -32,7 +32,7 @@ export default async function BlogPage() {
       <div className="mx-auto mt-16 grid max-w-2xl auto-rows-fr grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         {posts.map((post: BlogPost) => {
           const imageUrl =
-            post.image ||
+            post.mainImage ||
             'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
 
           return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { getPricingTiers } from '../lib/sanity/utils';
+import { getPricingTiers, getLocalizedString } from '../lib/sanity/utils';
 import type { PricingTier } from '../lib/sanity/types';
 
 interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
@@ -95,17 +95,17 @@ export default function PricingSection() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
-              {getLocalizedText({ en: 'Pricing', ru: 'Тарифы', fr: 'Tarifs' })}
+              {getLocalizedString({ en: 'Pricing', ru: 'Тарифы', fr: 'Tarifs' })}
             </p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-              {getLocalizedText({
+              {getLocalizedString({
                 en: 'Transparent packages, flexible terms',
                 ru: 'Прозрачные пакеты, гибкие условия',
                 fr: 'Forfaits transparents, conditions flexibles',
               })}
             </h2>
             <p className="mt-3 max-w-xl text-sm text-slate-600">
-              {getLocalizedText({
+              {getLocalizedString({
                 en: 'The fee is fixed in advance and depends on the volume of capital and complexity of the structure. Partial success-fee model is possible.',
                 ru: 'Гонорар фиксируется заранее и зависит от объёма капитала и сложности структуры. Возможна частичная success-fee модель.',
                 fr: "Les honoraires sont fixés à l'avance et dépendent du volume de capital et de la complexité de la structure. Modèle success-fee partiel possible.",
@@ -118,8 +118,8 @@ export default function PricingSection() {
           {sortedTiers
             .filter((tier) => tier.tier !== 'crypto')
             .map((tier) => {
-              const title = getLocalizedText(tier.title);
-              const description = getLocalizedText(tier.description);
+              const title = getLocalizedString(tier.title);
+              const description = getLocalizedString(tier.description);
               const investmentRange = tier.investmentRange;
               const feeRange = tier.feeRange;
 
@@ -131,7 +131,7 @@ export default function PricingSection() {
                   <div>
                     <p className="text-xs font-semibold tracking-[0.25em] text-slate-500 uppercase">{title}</p>
                     <p className="mt-2 text-sm font-medium text-slate-900">
-                      {getLocalizedText({
+                      {getLocalizedString({
                         en: 'Capital',
                         ru: 'Капитал',
                         fr: 'Capital',
@@ -148,7 +148,7 @@ export default function PricingSection() {
                     <p className="mt-3 text-2xl font-semibold text-red-600">
                       {tier.isCustomFee ? (
                         <>
-                          {getLocalizedText({
+                          {getLocalizedString({
                             en: 'Custom pricing',
                             ru: 'Индивидуально',
                             fr: 'Sur devis',
@@ -169,7 +169,7 @@ export default function PricingSection() {
                     href="#contact"
                     className="mt-4 inline-flex items-center justify-center rounded-full border border-red-600 px-4 py-2 text-[11px] font-semibold text-red-600 hover:bg-red-50"
                   >
-                    {getLocalizedText({
+                    {getLocalizedString({
                       en: 'Get a quote',
                       ru: 'Получить предложение',
                       fr: 'Obtenir un devis',
@@ -189,13 +189,13 @@ export default function PricingSection() {
                 className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-xs text-slate-700"
               >
                 <p className="font-semibold text-slate-900">
-                  {getLocalizedText({
+                  {getLocalizedString({
                     en: 'Crypto onboarding from 100k €',
                     ru: 'Крипто-ввод от 100k €',
                     fr: 'Onboarding crypto à partir de 100k €',
                   })}
                 </p>
-                <p className="mt-1 text-slate-600">{getLocalizedText(tier.description)}</p>
+                <p className="mt-1 text-slate-600">{getLocalizedString(tier.description)}</p>
                 <p className="mt-2 text-sm font-semibold text-red-600">
                   {tier.feeRange ? (
                     <>
@@ -210,17 +210,17 @@ export default function PricingSection() {
             ))}
           <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
             <p className="font-semibold">
-              {getLocalizedText({
+              {getLocalizedString({
                 en: 'Custom terms for complex cases',
                 ru: 'Индивидуальные условия для сложных кейсов',
                 fr: 'Conditions personnalisées pour les cas complexes',
               })}
             </p>
             <p className="mt-1">
-              {getLocalizedText({
-                en: 'Sanction risks, CFC, trusts, funds, complex ownership structures are discussed in a separate strategy session.',
-                ru: 'Санкционные риски, CFC, трасты, фонды, сложные структуры владения обсуждаются на отдельной стратегической сессии.',
-                fr: "Les risques de sanctions, CFC, fiducies, fonds, structures de propriété complexes sont discutés lors d'une séance de stratégie distincte.",
+              {getLocalizedString({
+                en: 'Choose the package that fits your needs. All packages include dedicated account management and personalized service.',
+                ru: 'Выберите пакет, соответствующий вашим потребностям. Все пакеты включают персонального менеджера и индивидуальный сервис.',
+                fr: 'Choisissez le forfait qui correspond à vos besoins. Tous les forfaits incluent une gestion de compte dédiée et un service personnalisé.',
               })}
             </p>
           </div>
