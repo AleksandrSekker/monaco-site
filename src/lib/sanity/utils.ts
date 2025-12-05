@@ -1,5 +1,16 @@
 import { client, isSanityConfigured } from './client';
-import type { Hero, Service, PricingTier, Case, BlogPost, About, Contact, LocaleString, LocaleText } from './types';
+import type {
+  Hero,
+  Service,
+  PricingTier,
+  Case,
+  BlogPost,
+  About,
+  Contact,
+  LocaleString,
+  LocaleText,
+  LocalizedPricingTier,
+} from './types';
 
 // Helper function to handle i18n strings
 function getLocalizedString(content: string | LocaleString | LocaleText | undefined, locale: string = 'en'): string {
@@ -46,12 +57,21 @@ export async function getServices(): Promise<Service[]> {
   }
 }
 
-export async function getPricingTiers(): Promise<PricingTier[]> {
+export async function getPricingTiers(locale: string = 'en'): Promise<LocalizedPricingTier[]> {
   if (!isSanityConfigured || !client) {
     return [];
   }
   try {
-    return await client.fetch<PricingTier[]>(pricingQuery);
+    const pricingTiers = await client.fetch<PricingTier[]>(pricingQuery);
+    return pricingTiers.map((tier) => ({
+      ...tier,
+      title: getLocalizedString(tier.title, locale),
+      description: getLocalizedString(tier.description, locale),
+      features: tier.features.map((feature) => ({
+        text: getLocalizedString(feature.text, locale),
+        included: feature.included,
+      })),
+    }));
   } catch (error) {
     console.error('Error fetching pricing tiers:', error);
     return [];

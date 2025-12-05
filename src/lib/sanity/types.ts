@@ -38,6 +38,15 @@ export interface PricingTier {
   isPopular: boolean;
 }
 
+export interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
+  title: string;
+  description: string;
+  features: Array<{
+    text: string;
+    included: boolean;
+  }>;
+}
+
 export interface LocaleString {
   _type: 'localeString';
   en: string;

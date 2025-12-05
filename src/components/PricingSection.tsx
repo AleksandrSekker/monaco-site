@@ -1,8 +1,18 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { getPricingTiers, type LocalizedPricingTier } from '@/sanity/utils';
+import { getPricingTiers } from '@/lib/sanity/utils';
+import type { PricingTier } from '@/lib/sanity/types';
 import { getLocalizedText } from '../lib/i18n';
+
+interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
+  title: string;
+  description: string;
+  features: Array<{
+    text: string;
+    included: boolean;
+  }>;
+}
 
 export default function PricingSection() {
   const [pricingTiers, setPricingTiers] = useState<LocalizedPricingTier[]>([]);
