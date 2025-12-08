@@ -2,17 +2,16 @@ import CasesSection from '@/components/sections/CasesSection';
 import PricingSection from '@/components/sections/PricingSection';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { locales, Locale } from '@/lib/i18n';
+import { locales } from '@/lib/i18n';
 import ContactSection from '@/components/sections/ContactSection';
 import ProcessSteps from '@/components/ProcessSteps';
 import HeroSection from '@/components/sections/HeroSection';
 import ServicesSection from '@/components/sections/ServicesSection';
 
-interface PageProps {
-  params: {
-    locale: Locale;
-  };
-}
+type PageProps = {
+  params: { locale: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -23,9 +22,9 @@ export const metadata: Metadata = {
   description: 'Your financial partner in Monaco',
 };
 
-export default async function Home({ params }: PageProps) {
+export default function Home({ params }: PageProps) {
   const { locale } = params;
-  if (!locales.includes(locale as Locale)) notFound();
+  if (!locales.includes(locale as Parameters<typeof locales.includes>[0])) notFound();
   return (
     <div className="bg-white">
       <HeroSection />
