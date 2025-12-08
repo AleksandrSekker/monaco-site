@@ -10,7 +10,7 @@ import ServicesSection from '@/components/sections/ServicesSection';
 
 interface PageProps {
   params: {
-    locale: string;
+    locale: Locale;
   };
 }
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({ params }: PageProps) {
-  const { locale } = await params;
+  const { locale } = params;
   if (!locales.includes(locale as Locale)) notFound();
   return (
     <div className="bg-white">
