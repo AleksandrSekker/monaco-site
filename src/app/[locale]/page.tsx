@@ -8,13 +8,19 @@ import ProcessSteps from '@/components/ProcessSteps';
 import HeroSection from '@/components/sections/HeroSection';
 import ServicesSection from '@/components/sections/ServicesSection';
 
-type PageProps = {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+// Import Locale type
+import type { Locale } from '@/lib/i18n';
+
+// Define the expected params type
+type PageParams = {
+  locale: Locale;
 };
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+// Generate static params for static generation
+export async function generateStaticParams() {
+  return locales.map((locale) => ({
+    locale,
+  }));
 }
 
 export const metadata: Metadata = {
@@ -22,9 +28,10 @@ export const metadata: Metadata = {
   description: 'Your financial partner in Monaco',
 };
 
-export default function Home({ params }: PageProps) {
+// The page component with proper typing
+export default async function Home({ params }: { params: PageParams }) {
   const { locale } = params;
-  if (!locales.includes(locale as Parameters<typeof locales.includes>[0])) notFound();
+  if (!locales.includes(locale)) notFound();
   return (
     <div className="bg-white">
       <HeroSection />
