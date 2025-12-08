@@ -3,8 +3,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { locales, Locale } from '@/lib/i18n';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import QuickApplyModal from '@/components/QuickApplyModal';
-import Header from '@/components/Header';
+import Header from '@/components/layout/Header/Header';
+import Footer from '@/components/layout/Footer/Footer';
 import '../globals.css';
 
 interface LayoutProps {
@@ -38,37 +38,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
             <Header />
             <main className="flex-1 bg-white">{children}</main>
 
-            <footer className="border-t border-slate-200 bg-slate-50">
-              <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-sm text-slate-600 lg:px-6 lg:py-10">
-                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold tracking-[0.25em] text-slate-700 uppercase">
-                      Monaco Financial Solution
-                    </p>
-                    <p className="mt-2 max-w-xl text-sm text-slate-600">
-                      Семейный офис под ключ в Монако: банковские счета, кредитные линии, инвестиции и приём
-                      криптовалюты для частных клиентов и компаний.
-                    </p>
-                  </div>
-                  <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-lg">
-                    <p className="text-xs font-semibold tracking-wide text-slate-900">Готовы обсудить задачу</p>
-                    <p className="mt-1 text-xs text-slate-600">
-                      Оставьте заявку в один клик — форма откроется во всплывающем окне.
-                    </p>
-                    <div className="mt-3">
-                      <QuickApplyModal buttonLabel="Оставить заявку" variant="secondary" />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-start justify-between gap-3 border-t border-slate-200 pt-4 text-xs text-slate-500 md:flex-row md:items-center">
-                  <span>© {new Date().getFullYear()} Monaco Financial Solution</span>
-                  <div className="flex flex-wrap items-center gap-4">
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-slate-500">FR / EN / RU</span>
-                    <span>Офис: Монако</span>
-                  </div>
-                </div>
-              </div>
-            </footer>
+            <Footer />
 
             <a
               href="https://t.me/"

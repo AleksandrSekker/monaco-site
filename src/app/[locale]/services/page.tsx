@@ -1,3 +1,6 @@
+import { servicesHeaders } from '@/translations/headers';
+import PageHeader from '@/components/ui/PageHeader';
+
 export default function ServicesPage() {
   const services = [
     {
@@ -36,19 +39,7 @@ export default function ServicesPage() {
     <div className="bg-white">
       <section className="border-b border-slate-200 bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 lg:px-6">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
-              Услуги
-            </p>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Банковская инфраструктура и семейный офис под ключ
-            </h1>
-            <p className="mt-4 text-sm text-slate-600">
-              Мы работаем как private office: от первой консультации до получения вами счёта, карт, кредитной линии и
-              инвестиционной стратегии. Все решения настраиваются под вашу страну резидентности, источник капитала и
-              цели.
-            </p>
-          </div>
+          <PageHeader translations={servicesHeaders} />
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => (
@@ -72,5 +63,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-
-

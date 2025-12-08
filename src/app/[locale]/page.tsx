@@ -1,12 +1,12 @@
-import CasesSection from '@/components/CasesSection';
-import PricingSection from '@/components/PricingSection';
+import CasesSection from '@/components/sections/CasesSection';
+import PricingSection from '@/components/sections/PricingSection';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { locales, Locale } from '@/lib/i18n';
-import ContactSection from '@/components/ContactSection';
+import ContactSection from '@/components/sections/ContactSection';
 import ProcessSteps from '@/components/ProcessSteps';
-import HeroSection from '@/components/HeroSection';
-import ServicesSection from '@/components/ServicesSection';
+import HeroSection from '@/components/sections/HeroSection';
+import ServicesSection from '@/components/sections/ServicesSection';
 
 interface PageProps {
   params: {

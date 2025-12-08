@@ -3,7 +3,7 @@
 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { contactTranslations } from '@/translations/contact';
-import ContactForm from './ContactForm';
+import ContactForm from '../ui/contactForm/ContactForm';
 import { Locale } from '@/lib/i18n';
 
 export default function ContactSection() {
