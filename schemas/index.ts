@@ -7,3 +7,4 @@ const schemas = [hero, service];
 
 // Export all schemas as an array
 export default schemas;
+
