@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { getPricingTiers, getLocalizedString } from '../lib/sanity/utils';
 import type { PricingTier } from '../lib/sanity/types';
+import PricingHeader from './PricingHeader';
 
 interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
   title: string;
@@ -93,25 +94,7 @@ export default function PricingSection() {
     <section id="pricing" className="border-b border-slate-200 bg-slate-50 py-14 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
-              {getLocalizedString({ en: 'Pricing', ru: 'Тарифы', fr: 'Tarifs' })}
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-              {getLocalizedString({
-                en: 'Transparent packages, flexible terms',
-                ru: 'Прозрачные пакеты, гибкие условия',
-                fr: 'Forfaits transparents, conditions flexibles',
-              })}
-            </h2>
-            <p className="mt-3 max-w-xl text-sm text-slate-600">
-              {getLocalizedString({
-                en: 'The fee is fixed in advance and depends on the volume of capital and complexity of the structure. Partial success-fee model is possible.',
-                ru: 'Гонорар фиксируется заранее и зависит от объёма капитала и сложности структуры. Возможна частичная success-fee модель.',
-                fr: "Les honoraires sont fixés à l'avance et dépendent du volume de capital et de la complexité de la structure. Modèle success-fee partiel possible.",
-              })}
-            </p>
-          </div>
+          <PricingHeader />
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
