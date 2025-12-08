@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { getPricingTiers, getLocalizedString } from '../lib/sanity/utils';
-import type { PricingTier } from '../lib/sanity/types';
-import PricingHeader from './PricingHeader';
+import { getPricingTiers, getLocalizedString } from '../../lib/sanity/utils';
+import type { PricingTier } from '../../lib/sanity/types';
+import { pricingHeaders } from '@/translations/headers';
+import PageHeader from '../ui/PageHeader';
 
 interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
   title: string;
@@ -94,7 +95,7 @@ export default function PricingSection() {
     <section id="pricing" className="border-b border-slate-200 bg-slate-50 py-14 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <PricingHeader />
+          <PageHeader translations={pricingHeaders} />
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">

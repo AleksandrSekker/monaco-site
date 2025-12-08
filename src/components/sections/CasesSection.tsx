@@ -2,11 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCases } from '../lib/sanity/utils';
-import type { Case, LocaleString, LocaleText } from '../lib/sanity/types';
+import { getCases } from '../../lib/sanity/utils';
+import type { Case, LocaleString, LocaleText } from '../../lib/sanity/types';
 import Image from 'next/image';
-import PageHeader from './PageHeader';
-
+import PageHeader from '../ui/PageHeader';
+import { casesHeaders } from '@/translations/headers';
 // Type for localized content with language codes as keys
 type LocalizedContent = LocaleString | LocaleText | string;
 
@@ -77,11 +77,8 @@ export default function CasesSection() {
   console.log('cases:', cases);
   return (
     <div className="w-full">
-      <div className="max-w-6xl mx-auto px-4 pb-16">
-        <PageHeader
-          title="Наши кейсы"
-          description="Реальные примеры успешной работы с нашими клиентами в сфере частного банковского обслуживания в Монако"
-        />
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <PageHeader translations={casesHeaders} className="pb-8" />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {cases.map((caseItem) => {

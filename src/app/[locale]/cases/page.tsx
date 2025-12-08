@@ -1,4 +1,4 @@
-import CasesSection from '@/components/CasesSection';
+import CasesSection from '@/components/sections/CasesSection';
 
 export default function CasesPage() {
   return (
