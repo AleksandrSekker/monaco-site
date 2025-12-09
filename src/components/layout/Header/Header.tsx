@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import QuickApplyModal from '@/components/ui/QuickApplyModal';
+// import QuickApplyModal from '@/components/ui/QuickApplyModal';
 import { locales, Locale } from '@/lib/i18n';
 import Image from 'next/image';
 import { headerTranslations } from '@/translations/header';
@@ -99,7 +99,7 @@ export default function Header() {
             >
               {t.nav.whatsapp}
             </a>
-            <QuickApplyModal />
+            {/* <QuickApplyModal /> */}
           </div>
         </div>
       </div>
