@@ -1,20 +1,11 @@
 import CasesSection from '@/components/sections/CasesSection';
 import PricingSection from '@/components/sections/PricingSection';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import { locales } from '@/lib/i18n';
 import ContactSection from '@/components/sections/ContactSection';
 import ProcessSteps from '@/components/ProcessSteps';
 import HeroSection from '@/components/sections/HeroSection';
 import ServicesSection from '@/components/sections/ServicesSection';
-
-// Import Locale type
-import type { Locale } from '@/lib/i18n';
-
-// Define the expected params type
-type PageParams = {
-  locale: Locale;
-};
 
 // Generate static params for static generation
 export async function generateStaticParams() {
@@ -29,9 +20,7 @@ export const metadata: Metadata = {
 };
 
 // The page component with proper typing
-export default async function Home({ params }: { params: PageParams }) {
-  const { locale } = params;
-  if (!locales.includes(locale)) notFound();
+export default async function Home() {
   return (
     <div className="bg-white">
       <HeroSection />

@@ -10,7 +10,7 @@ import '../globals.css';
 interface LayoutProps {
   children: React.ReactNode;
   params: {
-    locale: string;
+    locale: Locale;
   };
 }
 
@@ -28,7 +28,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
 
   // Validate that the incoming locale is valid
-  if (!locales.includes(locale as Locale)) notFound();
+  if (!locales.includes(locale)) notFound();
 
   return (
     <html lang={locale}>
