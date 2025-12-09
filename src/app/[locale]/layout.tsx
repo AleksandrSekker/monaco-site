@@ -10,9 +10,7 @@ import '../globals.css';
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: {
-    locale: string;
-  };
+  params: Promise<{ locale: string }>;
 }
 
 export function generateStaticParams() {
