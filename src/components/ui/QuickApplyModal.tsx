@@ -6,22 +6,40 @@ import { useParams } from 'next/navigation';
 import { Locale } from '@/lib/i18n';
 import { quickApplyTranslations } from '@/translations/quickApplyModal';
 
+function ModalPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
 type QuickApplyModalProps = {
   buttonLabel?: string;
   variant?: 'primary' | 'secondary';
+  className?: string;
 };
 
-export default function QuickApplyModal({ buttonLabel, variant = 'primary' }: QuickApplyModalProps) {
+export default function QuickApplyModal({ buttonLabel, variant = 'primary', className = '' }: QuickApplyModalProps) {
   const { locale = 'en' } = useParams<{ locale?: Locale }>();
-  const t = quickApplyTranslations[locale as Locale] || quickApplyTranslations.en;
   const [open, setOpen] = useState(false);
-  const isMounted = useRef(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const t = quickApplyTranslations[locale as Locale] || quickApplyTranslations.en;
+  const resolvedButtonLabel = buttonLabel || t.defaultButtonLabel;
+
+  // Handle button click
   useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
+    const button = buttonRef.current;
+    if (!button) return;
+
+    const handleClick = () => setOpen(true);
+    button.addEventListener('click', handleClick);
+    return () => button.removeEventListener('click', handleClick);
   }, []);
 
   // Handle escape key press
@@ -46,32 +64,25 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary' }: Qu
   const baseButtonClasses =
     'text-xs font-semibold tracking-wide rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white';
 
-  const variantClasses =
-    variant === 'primary'
-      ? 'bg-red-600 px-4 py-2 text-white shadow-lg shadow-red-600/30 hover:bg-red-700'
-      : 'border border-red-600 px-4 py-2 text-red-600 hover:bg-red-50';
+  const variantClasses = {
+    primary: 'bg-red-600 px-4 py-2 text-white shadow-lg shadow-red-600/30 hover:bg-red-700',
+    secondary: 'border border-red-600 px-4 py-2 text-red-600 hover:bg-red-50',
+  };
 
-  // Check if we're on the client side
-  const [isClient] = useState(() => typeof window !== 'undefined');
+  // Button component
+  const button = (
+    <button ref={buttonRef} type="button" className={`${baseButtonClasses} ${variantClasses[variant]} ${className}`}>
+      {resolvedButtonLabel}
+    </button>
+  );
 
-  // Only render the portal on the client
-  if (!isClient) {
-    return (
-      <button type="button" className={`${baseButtonClasses} ${variantClasses} opacity-0`} aria-hidden="true">
-        {buttonLabel || t.defaultButtonLabel}
-      </button>
-    );
+  // Don't render portal during SSR
+  if (typeof window === 'undefined') {
+    return button;
   }
 
-  const modalContent = open ? (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          setOpen(false);
-        }
-      }}
-    >
+  const modalContent = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setOpen(false)}>
       <div
         className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.3)]"
         onClick={(e) => e.stopPropagation()}
@@ -125,14 +136,12 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary' }: Qu
         </form>
       </div>
     </div>
-  ) : null;
+  );
 
   return (
     <>
-      <button type="button" className={`${baseButtonClasses} ${variantClasses}`} onClick={() => setOpen(true)}>
-        {buttonLabel || t.defaultButtonLabel}
-      </button>
-      {createPortal(modalContent, document.body)}
+      {button}
+      {open && <ModalPortal>{modalContent}</ModalPortal>}
     </>
   );
 }

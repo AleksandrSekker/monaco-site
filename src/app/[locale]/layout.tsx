@@ -1,7 +1,8 @@
 // src/app/[locale]/layout.tsx
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { locales, Locale } from '@/lib/i18n';
+import { locales } from '@/lib/i18n';
+import type { Locale } from '@/lib/i18n';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
@@ -10,7 +11,7 @@ import '../globals.css';
 interface LayoutProps {
   children: React.ReactNode;
   params: {
-    locale: Locale;
+    locale: string;
   };
 }
 
@@ -24,11 +25,13 @@ export const metadata: Metadata = {
 };
 
 export default async function LocaleLayout({ children, params }: LayoutProps) {
-  // Await the params
-  const { locale } = await params;
-
   // Validate that the incoming locale is valid
-  if (!locales.includes(locale)) notFound();
+  const { locale } = await Promise.resolve(params);
+
+  // Type assertion after validation
+  if (!locales.includes(locale as Locale)) {
+    notFound();
+  }
 
   return (
     <html lang={locale}>
