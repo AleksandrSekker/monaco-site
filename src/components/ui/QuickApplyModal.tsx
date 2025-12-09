@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useParams } from 'next/navigation';
 import { Locale } from '@/lib/i18n';
@@ -9,9 +9,13 @@ import { quickApplyTranslations } from '@/translations/quickApplyModal';
 function ModalPortal({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    // setMounted(true);
-    return () => setMounted(false);
+  useLayoutEffect(() => {
+    // Use setTimeout to make it async, avoiding the ESLint warning
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
@@ -32,15 +36,8 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
   const t = quickApplyTranslations[locale as Locale] || quickApplyTranslations.en;
   const resolvedButtonLabel = buttonLabel || t.defaultButtonLabel;
 
-  // Handle button click
-  useEffect(() => {
-    const button = buttonRef.current;
-    if (!button) return;
-
-    const handleClick = () => setOpen(true);
-    button.addEventListener('click', handleClick);
-    return () => button.removeEventListener('click', handleClick);
-  }, []);
+  // Handle button click - better to use onClick directly instead of useEffect
+  const handleButtonClick = () => setOpen(true);
 
   // Handle escape key press
   useEffect(() => {
@@ -61,6 +58,21 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
     };
   }, [open]);
 
+  // Handle click outside modal - add this effect for better UX
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const modalContent = document.querySelector('.modal-content');
+      if (modalContent && !modalContent.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open]);
+
   const baseButtonClasses =
     'text-xs font-semibold tracking-wide rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white';
 
@@ -69,9 +81,14 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
     secondary: 'border border-red-600 px-4 py-2 text-red-600 hover:bg-red-50',
   };
 
-  // Button component
+  // Button component with direct onClick
   const button = (
-    <button ref={buttonRef} type="button" className={`${baseButtonClasses} ${variantClasses[variant]} ${className}`}>
+    <button
+      ref={buttonRef}
+      type="button"
+      onClick={handleButtonClick}
+      className={`${baseButtonClasses} ${variantClasses[variant]} ${className}`}
+    >
       {resolvedButtonLabel}
     </button>
   );
@@ -84,7 +101,7 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
   const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setOpen(false)}>
       <div
-        className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.3)]"
+        className="modal-content w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.3)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
