@@ -6,7 +6,6 @@ import BlogPostCard from '@/components/ui/blog/BlogPostCard';
 export default async function BlogPage() {
   const posts = await getBlogPosts();
 
-  console.log('posts', posts);
   return (
     <div className="mx-auto max-w-6xl px-6 lg:px-8 py-12">
       <PageHeader translations={blogHeaders} />

@@ -80,7 +80,7 @@ export default function BlogPostCard({ post }: { post: BlogPost }) {
         <div className="text-sm">
           <p className="font-semibold text-white">{post.author?.name || 'Анонимный автор'}</p>
           <time dateTime={post.publishedAt} className="text-gray-300">
-            {new Date(post.publishedAt).toLocaleDateString('ru-RU', {
+            {new Date(post.publishedAt).toLocaleDateString(locale, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
