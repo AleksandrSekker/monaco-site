@@ -1,16 +1,5 @@
 import { client, isSanityConfigured } from './client';
-import type {
-  Hero,
-  Service,
-  PricingTier,
-  Case,
-  BlogPost,
-  About,
-  Contact,
-  LocaleString,
-  LocaleText,
-  LocalizedPricingTier,
-} from './types';
+import type { Hero, Service, PricingTier, Case, BlogPost, About, Contact, LocaleString, LocaleText } from './types';
 
 export interface I18nString {
   _type: 'i18nString';
@@ -74,7 +63,7 @@ export async function getServices(): Promise<Service[]> {
   }
 }
 
-export async function getPricingTiers(locale: string = 'en'): Promise<LocalizedPricingTier[]> {
+export async function getPricingTiers(): Promise<PricingTier[]> {
   if (!isSanityConfigured || !client) {
     console.warn('Sanity client is not configured');
     return [];
@@ -89,25 +78,19 @@ export async function getPricingTiers(locale: string = 'en'): Promise<LocalizedP
       return [];
     }
 
-    return pricingTiers.map((tier) => {
-      console.log('Processing tier:', tier._id, tier.tier);
-
-      return {
-        ...tier,
-        title: getLocalizedString(tier.title, locale),
-        description: getLocalizedString(tier.description, locale),
-        features: (tier.features || []).map((feature) => ({
-          text: getLocalizedString(feature?.text, locale) || '',
+    return pricingTiers.map((tier) => ({
+      ...tier,
+      features:
+        tier.features?.map((feature) => ({
+          ...feature,
           included: feature?.included ?? false,
-        })),
-      };
-    });
+        })) || [],
+    }));
   } catch (error) {
     console.error('Error fetching pricing tiers:', error);
     return [];
   }
 }
-
 export async function getCases(locale: string = 'en'): Promise<Case[]> {
   if (!isSanityConfigured || !client) {
     return [];

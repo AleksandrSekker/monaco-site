@@ -1,24 +1,45 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { getPricingTiers, getLocalizedString } from '../../lib/sanity/utils';
-import type { PricingTier } from '../../lib/sanity/types';
+import { getPricingTiers } from '../../lib/sanity/utils';
+import type { PricingTier, LocaleString, LocaleText } from '../../lib/sanity/types';
 import { pricingHeaders } from '@/translations/headers';
+import { getPricingTranslations } from '@/translations/pricing';
 import PageHeader from '../ui/PageHeader';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {
-  title: string;
-  description: string;
-  features: Array<{
-    text: string;
-    included: boolean;
-  }>;
+// Type for localized content with language codes as keys
+type LocalizedContent = LocaleString | LocaleText | string;
+
+// Helper function to handle i18n strings
+function getLocalizedString(
+  content: LocalizedContent | { en: string; [key: string]: string },
+  locale: string = 'en',
+): string {
+  if (!content) return '';
+  if (typeof content === 'string') return content;
+
+  // Handle Sanity locale objects
+  if ('_type' in content && (content._type === 'localeString' || content._type === 'localeText')) {
+    return content[locale as keyof typeof content] || content.en || '';
+  }
+
+  // Handle our inline locale objects like { en: 'text', ru: 'текст' }
+  if ('en' in content) {
+    return content[locale as keyof typeof content] || content.en || '';
+  }
+
+  return '';
 }
 
+// We'll use the PricingTier type directly
+
 export default function PricingSection() {
-  const [pricingTiers, setPricingTiers] = useState<LocalizedPricingTier[]>([]);
+  const [pricingTiers, setPricingTiers] = useState<Array<PricingTier>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { locale } = useLanguage();
+  const t = getPricingTranslations(locale);
 
   // Single effect for data fetching and debugging
   useEffect(() => {
@@ -102,8 +123,6 @@ export default function PricingSection() {
           {sortedTiers
             .filter((tier) => tier.tier !== 'crypto')
             .map((tier) => {
-              const title = getLocalizedString(tier.title);
-              const description = getLocalizedString(tier.description);
               const investmentRange = tier.investmentRange;
               const feeRange = tier.feeRange;
 
@@ -113,7 +132,9 @@ export default function PricingSection() {
                   className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
                 >
                   <div>
-                    <p className="text-xs font-semibold tracking-[0.25em] text-slate-500 uppercase">{title}</p>
+                    <p className="text-xs font-semibold tracking-[0.25em] text-slate-500 uppercase">
+                      {getLocalizedString(tier.title, locale)}
+                    </p>
                     <p className="mt-2 text-sm font-medium text-slate-900">
                       {getLocalizedString({
                         en: 'Capital',
@@ -147,17 +168,13 @@ export default function PricingSection() {
                         <span className="text-sm">Contact us</span>
                       )}
                     </p>
-                    <p className="mt-3 text-xs text-slate-600">{description}</p>
+                    <p className="mt-3 text-xs text-slate-600">{getLocalizedString(tier.description, locale)}</p>
                   </div>
                   <a
                     href="#contact"
                     className="mt-4 inline-flex items-center justify-center rounded-full border border-red-600 px-4 py-2 text-[11px] font-semibold text-red-600 hover:bg-red-50"
                   >
-                    {getLocalizedString({
-                      en: 'Get a quote',
-                      ru: 'Получить предложение',
-                      fr: 'Obtenir un devis',
-                    })}
+                    {t.getAQuote}
                   </a>
                 </div>
               );
@@ -167,19 +184,13 @@ export default function PricingSection() {
         <div className="mt-8 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
           {sortedTiers
             .filter((tier) => tier.tier === 'crypto')
-            .map((tier: LocalizedPricingTier) => (
+            .map((tier) => (
               <div
                 key={tier._id}
                 className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-xs text-slate-700"
               >
-                <p className="font-semibold text-slate-900">
-                  {getLocalizedString({
-                    en: 'Crypto onboarding from 100k €',
-                    ru: 'Крипто-ввод от 100k €',
-                    fr: 'Onboarding crypto à partir de 100k €',
-                  })}
-                </p>
-                <p className="mt-1 text-slate-600">{getLocalizedString(tier.description)}</p>
+                <p className="font-semibold text-slate-900">{t.cryptoOnboarding}</p>
+                <p className="mt-1 text-slate-600">{getLocalizedString(tier.description, locale)}</p>
                 <p className="mt-2 text-sm font-semibold text-red-600">
                   {tier.feeRange ? (
                     <>
@@ -187,26 +198,14 @@ export default function PricingSection() {
                       {tier.feeRange.max ? <>{`–${formatCurrency(tier.feeRange.max, false)}`}</> : '+'} €
                     </>
                   ) : (
-                    'Contact us'
+                    getLocalizedString(t.contactUs, locale)
                   )}
                 </p>
               </div>
             ))}
           <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
-            <p className="font-semibold">
-              {getLocalizedString({
-                en: 'Custom terms for complex cases',
-                ru: 'Индивидуальные условия для сложных кейсов',
-                fr: 'Conditions personnalisées pour les cas complexes',
-              })}
-            </p>
-            <p className="mt-1">
-              {getLocalizedString({
-                en: 'Choose the package that fits your needs. All packages include dedicated account management and personalized service.',
-                ru: 'Выберите пакет, соответствующий вашим потребностям. Все пакеты включают персонального менеджера и индивидуальный сервис.',
-                fr: 'Choisissez le forfait qui correspond à vos besoins. Tous les forfaits incluent une gestion de compte dédiée et un service personnalisé.',
-              })}
-            </p>
+            <p className="font-semibold">{getLocalizedString(t.customTerms, locale)}</p>
+            <p className="mt-1">{getLocalizedString(t.customTermsDescription, locale)}</p>
           </div>
         </div>
       </div>
