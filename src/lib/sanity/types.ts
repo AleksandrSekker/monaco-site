@@ -99,7 +99,11 @@ export interface BlogPost {
   };
   description?: string;
   excerpt?: string | LocaleString;
-  mainImage?: string;
+  mainImage?: {
+    asset?: {
+      url?: string;
+    };
+  };
   content?: import('@portabletext/types').PortableTextBlock[];
   publishedAt: string;
   author?: {
