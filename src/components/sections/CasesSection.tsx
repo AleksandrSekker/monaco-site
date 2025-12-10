@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { getCases } from '../../lib/sanity/utils';
 import type { Case, LocaleString, LocaleText } from '../../lib/sanity/types';
-import Image from 'next/image';
+import { RoundedImage } from '@/components/ui/RoundedImage';
 import PageHeader from '../ui/PageHeader';
 import { casesHeaders } from '@/translations/headers';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -85,21 +85,26 @@ export default function CasesSection() {
               key={caseItem._id}
               className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-slate-300 transition-colors duration-200"
             >
-              {caseItem.featuredImage?.asset?._ref && (
-                <div className="relative h-48 w-full overflow-hidden rounded-lg mb-4">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_SANITY_IMAGE_CDN || ''}${caseItem.featuredImage.asset._ref.replace('image-', '').replace('-jpg', '.jpg')}`}
-                    alt={(caseItem && (caseItem.title as string)) || 'Case study'}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              <div className="space-y-3">
+                {caseItem.featuredImage && (
+                  <RoundedImage
+                    src={caseItem.featuredImage.url}
+                    alt={getLocalizedString(caseItem.title) || 'Case study'}
+                    size={48}
+                    placeholder="blur"
+                    blurDataURL={caseItem.featuredImage.lqip}
+                    onError={(e) => {
+                      console.error('Image failed to load:', e);
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
-                </div>
-              )}
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">{getLocalizedString(caseItem.title)}</h3>
-              {caseItem.description && (
-                <p className="text-slate-600 mb-4 line-clamp-3">{getLocalizedString(caseItem.description)}</p>
-              )}
+                )}
+                <h3 className="text-lg font-semibold text-slate-900">{getLocalizedString(caseItem.title)}</h3>
+                {caseItem.description && (
+                  <p className="text-slate-600 mb-4 line-clamp-3">{getLocalizedString(caseItem.description)}</p>
+                )}
+              </div>
             </article>
           ))}
         </div>

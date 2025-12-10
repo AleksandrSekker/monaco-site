@@ -79,6 +79,8 @@ export interface Case {
       _ref: string;
       _type: 'reference';
     };
+    url: string;
+    lqip: string;
     alt?: string;
   };
   publishedAt: string;
@@ -127,4 +129,3 @@ export interface Contact {
   phone: string;
   email: string;
 }
-
