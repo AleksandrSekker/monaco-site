@@ -1,11 +1,12 @@
-import { type SchemaTypeDefinition } from '@sanity/types';
-import post from './post';
-import caseStudy from './case';
-import pricing from './pricing';
-import author from './author';
-import category from './category';
-import localeString from './localeString';
-import localeText from './localeText';
+import {type SchemaTypeDefinition} from '@sanity/types'
+import post from './post'
+import caseStudy from './case'
+import pricing from './pricing'
+import author from './author'
+import category from './category'
+import localeString from './localeString'
+import localeText from './localeText'
+import localeBlockContent from './localeBlockContent'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
@@ -18,4 +19,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Localization types
   localeString,
   localeText,
-];
+  localeBlockContent,
+]

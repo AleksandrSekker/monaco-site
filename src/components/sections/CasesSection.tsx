@@ -4,9 +4,10 @@
 import { useState, useEffect } from 'react';
 import { getCases } from '../../lib/sanity/utils';
 import type { Case, LocaleString, LocaleText } from '../../lib/sanity/types';
-import Image from 'next/image';
+import { RoundedImage } from '@/components/ui/RoundedImage';
 import PageHeader from '../ui/PageHeader';
 import { casesHeaders } from '@/translations/headers';
+import { useLanguage } from '@/contexts/LanguageContext';
 // Type for localized content with language codes as keys
 type LocalizedContent = LocaleString | LocaleText | string;
 
@@ -23,18 +24,17 @@ function getLocalizedString(content: LocalizedContent, locale: string = 'en'): s
 export default function CasesSection() {
   const [cases, setCases] = useState<Case[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { locale } = useLanguage();
   useEffect(() => {
     const fetchCases = async () => {
       setIsLoading(true);
       try {
         console.log('Fetching cases...');
-        const data = await getCases();
+        const data = await getCases(locale); // Pass the current locale here
         console.log('Fetched cases:', data);
         setCases(data || []);
       } catch (error) {
         console.error('Error fetching cases:', error);
-        // Set empty array to prevent infinite loading state
         setCases([]);
       } finally {
         setIsLoading(false);
@@ -42,7 +42,7 @@ export default function CasesSection() {
     };
 
     fetchCases();
-  }, []);
+  }, [locale]);
 
   if (isLoading) {
     return (
@@ -74,38 +74,39 @@ export default function CasesSection() {
       </div>
     );
   }
-  console.log('cases:', cases);
   return (
     <div className="w-full">
       <div className="max-w-6xl mx-auto px-4 py-16">
         <PageHeader translations={casesHeaders} className="pb-8" />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {cases.map((caseItem) => {
-            const title = getLocalizedString(caseItem.title);
-            const description = getLocalizedString(caseItem.description);
-
-            return (
-              <article
-                key={caseItem._id}
-                className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-slate-300 transition-colors duration-200"
-              >
-                {caseItem.featuredImage?.asset?._ref && (
-                  <div className="relative h-48 w-full overflow-hidden rounded-lg mb-4">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_SANITY_IMAGE_CDN || ''}${caseItem.featuredImage.asset._ref.replace('image-', '').replace('-jpg', '.jpg')}`}
-                      alt={title || 'Case study'}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  </div>
+          {cases.map((caseItem) => (
+            <article
+              key={caseItem._id}
+              className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-slate-300 transition-colors duration-200"
+            >
+              <div className="space-y-3">
+                {caseItem.featuredImage && (
+                  <RoundedImage
+                    src={caseItem.featuredImage.url}
+                    alt={getLocalizedString(caseItem.title) || 'Case study'}
+                    size={48}
+                    placeholder="blur"
+                    blurDataURL={caseItem.featuredImage.lqip}
+                    onError={(e) => {
+                      console.error('Image failed to load:', e);
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
                 )}
-                <h3 className="text-xl font-semibold text-slate-900 mb-2">{title}</h3>
-                {description && <p className="text-slate-600 mb-4 line-clamp-3">{description}</p>}
-              </article>
-            );
-          })}
+                <h3 className="text-lg font-semibold text-slate-900">{getLocalizedString(caseItem.title)}</h3>
+                {caseItem.description && (
+                  <p className="text-slate-600 mb-4 line-clamp-3">{getLocalizedString(caseItem.description)}</p>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </div>

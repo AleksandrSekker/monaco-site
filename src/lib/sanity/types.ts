@@ -79,6 +79,8 @@ export interface Case {
       _ref: string;
       _type: 'reference';
     };
+    url: string;
+    lqip: string;
     alt?: string;
   };
   publishedAt: string;
@@ -97,7 +99,11 @@ export interface BlogPost {
   };
   description?: string;
   excerpt?: string | LocaleString;
-  mainImage?: string;
+  mainImage?: {
+    asset?: {
+      url?: string;
+    };
+  };
   content?: import('@portabletext/types').PortableTextBlock[];
   publishedAt: string;
   author?: {
@@ -127,4 +133,3 @@ export interface Contact {
   phone: string;
   email: string;
 }
-

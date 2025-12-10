@@ -18,10 +18,10 @@
     "@sanity/client": "^7.13.1",
     "@sanity/image-url": "^2.0.2",
     "@sanity/structure": "^2.36.2",
-    "@sanity/vision": "^4.20.3",
+    "@sanity/vision": "^4.21.0",
     "react": "^19.1",
     "react-dom": "^19.1",
-    "sanity": "^4.20.3",
+    "sanity": "^4.21.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
