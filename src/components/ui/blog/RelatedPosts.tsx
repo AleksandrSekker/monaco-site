@@ -14,9 +14,12 @@ interface RelatedPostsProps {
 export default function RelatedPosts({ posts, locale }: RelatedPostsProps) {
   if (posts.length === 0) return null;
 
-  const getImageUrl = (ref: string) => {
-    if (!ref) return '';
-    const [fileId, dimensions, format] = ref.split('-').slice(1);
+  const getImageUrl = (image: BlogPost['mainImage'] | undefined) => {
+    if (!image?.asset?._ref) return '';
+    // If we have a direct URL, use it
+    if (image.asset.url) return image.asset.url;
+    // Otherwise, try to construct the URL from the reference
+    const [fileId, dimensions, format] = image.asset._ref.split('-').slice(1);
     return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${
       process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
     }/${fileId}-${dimensions}.${format}`;
@@ -45,8 +48,8 @@ export default function RelatedPosts({ posts, locale }: RelatedPostsProps) {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => {
-            const imageUrl = post.mainImage?.asset?._ref
-              ? getImageUrl(post.mainImage.asset._ref)
+            const imageUrl = post.mainImage
+              ? getImageUrl(post.mainImage)
               : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
 
             return (
