@@ -14,9 +14,12 @@ interface RelatedPostsProps {
 export default function RelatedPosts({ posts, locale }: RelatedPostsProps) {
   if (posts.length === 0) return null;
 
-  const getImageUrl = (ref: string) => {
-    if (!ref) return '';
-    const [fileId, dimensions, format] = ref.split('-').slice(1);
+  const getImageUrl = (image: BlogPost['mainImage'] | undefined) => {
+    if (!image?.asset?._ref) return '';
+    // If we have a direct URL, use it
+    if (image.asset.url) return image.asset.url;
+    // Otherwise, try to construct the URL from the reference
+    const [fileId, dimensions, format] = image.asset._ref.split('-').slice(1);
     return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${
       process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
     }/${fileId}-${dimensions}.${format}`;
