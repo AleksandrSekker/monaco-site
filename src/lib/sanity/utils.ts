@@ -28,16 +28,7 @@ export function getLocalizedString(
   // Try the requested language, then English, then the first available language
   return localizedContent[lang] || localizedContent.en || Object.values(localizedContent)[0] || '';
 }
-import {
-  heroQuery,
-  servicesQuery,
-  pricingQuery,
-  casesQuery,
-  blogPostsQuery,
-  blogPostQuery,
-  aboutQuery,
-  contactQuery,
-} from './queries';
+import { heroQuery, servicesQuery, pricingQuery, casesQuery, aboutQuery, contactQuery } from './queries';
 
 export async function getHero(): Promise<Hero | null> {
   if (!isSanityConfigured || !client) {
@@ -111,23 +102,65 @@ export async function getCases(locale: string = 'en'): Promise<Case[]> {
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  if (!isSanityConfigured || !client) {
+  if (!client) {
+    console.error('Sanity client is not configured');
     return [];
   }
+
   try {
-    return await client.fetch<BlogPost[]>(blogPostsQuery);
+    const posts = await client.fetch(`
+      *[_type == "post"] | order(publishedAt desc) {
+        _id,
+        title,
+        slug,
+        excerpt,
+        mainImage,
+        publishedAt,
+        "categories": categories[]->{
+          title,
+          description
+        },
+        "author": author->{
+          name,
+          "image": image.asset->url
+        }
+      }
+    `);
+    return posts || [];
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     return [];
   }
 }
-
-export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  if (!isSanityConfigured || !client) {
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  if (!client) {
+    console.error('Sanity client is not configured');
     return null;
   }
+
   try {
-    return await client.fetch<BlogPost | null>(blogPostQuery, { slug });
+    console.log('Searching for post with slug:', slug); // Debug log
+
+    const post = await client.fetch(
+      `*[_type == "post" && (slug.current == $slug || slug.current == $slugWithDashes)][0]{
+        ...,
+        "categories": categories[]->{
+          title,
+          description
+        },
+        "author": author->{
+          name,
+          "image": image.asset->url
+        }
+      }`,
+      {
+        slug,
+        slugWithDashes: slug.replace(/-/g, ' '), // Also try with spaces instead of dashes
+      },
+    );
+
+    console.log('Found post:', post ? 'Yes' : 'No'); // Debug log
+    return post || null;
   } catch (error) {
     console.error('Error fetching blog post:', error);
     return null;

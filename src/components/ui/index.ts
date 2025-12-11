@@ -4,3 +4,6 @@ export { default as ContactForm } from './contactForm/ContactForm';
 export { default as ContactFormClient } from './contactForm/ContactForm.client';
 export { default as PageDescription } from './PageDescription';
 export { default as BlogPostCard } from './blog/BlogPostCard';
+export { default as BlogPostContent } from './blog/BlogPostContent';
+export { default as BackButton } from './BackButton';
+export { default as RelatedPosts } from './blog/RelatedPosts';

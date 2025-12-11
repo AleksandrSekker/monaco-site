@@ -3,8 +3,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useLanguage } from '@/contexts/LanguageContext';
 import type { BlogPost, LocaleString, LocaleText } from '@/lib/sanity/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type LocalizedContent = LocaleString | LocaleText | string;
 
@@ -12,7 +12,6 @@ type LocalizedContent = LocaleString | LocaleText | string;
 
 export default function BlogPostCard({ post }: { post: BlogPost }) {
   const { locale } = useLanguage();
-
   function getLocalizedString(content: LocalizedContent, locale: string = 'en'): string {
     if (!content) return '';
     if (typeof content === 'string') return content;
@@ -22,10 +21,16 @@ export default function BlogPostCard({ post }: { post: BlogPost }) {
     return '';
   }
 
-  const imageUrl =
-    post.mainImage?.asset?.url ||
-    'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
-
+  const getImageUrl = (ref: string) => {
+    if (!ref) return '';
+    const [fileId, dimensions, format] = ref.split('-').slice(1);
+    return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${
+      process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+    }/${fileId}-${dimensions}.${format}`;
+  };
+  const imageUrl = post.mainImage?.asset?._ref
+    ? getImageUrl(post.mainImage?.asset?._ref)
+    : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
   return (
     <article
       key={post._id}
@@ -55,14 +60,14 @@ export default function BlogPostCard({ post }: { post: BlogPost }) {
       </div>
 
       <h3 className="mt-3 text-lg font-semibold leading-6 text-white">
-        <Link href={`/blog/${post.slug.current}`} className="text-sm font-semibold leading-6 text-white-600">
+        <Link href={`/${locale}/blog/${post.slug.current}`} className="text-sm font-semibold leading-6 text-white-600">
           <span className="absolute inset-0" />
           {getLocalizedString(post.title, locale)}
         </Link>
       </h3>
 
       {post.excerpt && (
-        <p className="mt-5 text-sm leading-6 text-grey-300 line-clamp-2">{getLocalizedString(post.excerpt, locale)}</p>
+        <p className="mt-5 text-sm leading-6 text-white line-clamp-2">{getLocalizedString(post.excerpt, locale)}</p>
       )}
 
       <div className="mt-6 flex items-center gap-x-4">
