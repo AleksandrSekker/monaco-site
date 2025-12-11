@@ -189,6 +189,18 @@ export default function BlogPostContent({ post, locale }: BlogPostContentProps) 
         prose-headings:to-red-800 
         prose-headings:bg-clip-text 
         prose-headings:text-transparent
+        text-gray-800
+        [&>p]:text-gray-800
+        [&>ul]:text-gray-800
+        [&>ol]:text-gray-800
+        [&>p>a]:text-blue-600
+        [&>p>a]:hover:text-blue-700
+        [&>p>a]:underline
+        [&>p>code]:bg-gray-100
+        [&>p>code]:px-2
+        [&>p>code]:py-1
+        [&>p>code]:rounded
+        [&>p>code]:text-red-600
         [&>h1]:text-4xl
         [&>h1]:mb-6
         [&>h2]:text-3xl
