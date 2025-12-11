@@ -21,7 +21,7 @@ export default function RelatedPosts({ posts, locale }: RelatedPostsProps) {
       process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
     }/${fileId}-${dimensions}.${format}`;
   };
-
+  console.log('related post', posts);
   return (
     <div className="relative py-16 bg-white border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,11 +46,8 @@ export default function RelatedPosts({ posts, locale }: RelatedPostsProps) {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => {
             const imageUrl = post.mainImage?.asset?._ref
-              ? `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/production/${post.mainImage.asset._ref
-                  .split('-')
-                  .slice(1)
-                  .join('-')}`
-              : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&auto=format&fit=crop&w=3603&q=80';
+              ? getImageUrl(post.mainImage.asset._ref)
+              : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80';
 
             return (
               <article
