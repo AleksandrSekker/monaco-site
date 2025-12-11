@@ -101,10 +101,12 @@ export interface BlogPost {
   excerpt?: string | LocaleString;
   mainImage?: {
     asset?: {
+      _ref?: string;
       url?: string;
     };
   };
   content?: import('@portabletext/types').PortableTextBlock[];
+  body?: import('@portabletext/types').PortableTextBlock[];
   publishedAt: string;
   author?: {
     name: string;
