@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { getLocalizedText, getLocalizedBlockContent, Locale } from '@/lib/i18n';
 import type { BlogPost } from '@/lib/sanity/types';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
-// Remove unused import
+import cn from 'classnames';
 
 const components: PortableTextComponents = {
   // Let prose handle basic typography
@@ -108,6 +108,41 @@ export default function BlogPostContent({ post, locale }: BlogPostContentProps) 
   if (!content || !Array.isArray(content) || content.length === 0) {
     return <div className="text-gray-800">No content available.</div>;
   }
+  const proseClasses = cn(
+    // Base prose styles
+    'prose prose-lg max-w-3xl mx-auto',
+    'prose-headings:font-semibold prose-headings:bg-gradient-to-r prose-headings:from-red-600 prose-headings:to-red-800 prose-headings:bg-clip-text prose-headings:text-transparent',
+    'text-gray-800',
+
+    // Text colors
+    '[&>p]:text-gray-800 [&>ul]:text-gray-800 [&>ol]:text-gray-800',
+    '[&>p>a]:text-blue-600 [&>p>a]:hover:text-blue-700 [&>p>a]:underline',
+    '[&>p>code]:bg-gray-100 [&>p>code]:px-2 [&>p>code]:py-1 [&>p>code]:rounded [&>p>code]:text-red-600',
+
+    // Headings
+    '[&>h1]:text-4xl [&>h1]:mb-6',
+    '[&>h2]:text-3xl [&>h2]:mt-12 [&>h2]:mb-6',
+    '[&>h3]:text-2xl [&>h3]:mt-10 [&>h3]:mb-4 [&>h3]:text-gray-800',
+
+    // Paragraphs
+    '[&>p]:leading-relaxed [&>p]:mb-6',
+
+    // Lists
+    '[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4',
+    '[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4',
+    '[&_li]:text-gray-800 [&_li]:mb-2 [&_li]:leading-relaxed',
+
+    // Typography
+    'prose-strong:text-gray-900',
+    'prose-li:text-gray-900',
+    'prose-a:text-red-600 hover:prose-a:text-red-700',
+
+    // Images
+    'prose-img:rounded-xl prose-img:border prose-img:border-gray-200',
+
+    // Blockquotes
+    'prose-blockquote:not-italic prose-blockquote:bg-gray-50 prose-blockquote:border-l-red-400 prose-blockquote:border-l-4 prose-blockquote:text-gray-800',
+  );
   console.log('Blog post content:', content);
   return (
     <article className="custom-prose max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-white">
@@ -180,55 +215,7 @@ export default function BlogPostContent({ post, locale }: BlogPostContentProps) 
         )}
       </header>
 
-      <div
-        className="
-        prose prose-lg max-w-3xl mx-auto 
-        prose-headings:font-semibold 
-        prose-headings:bg-gradient-to-r 
-        prose-headings:from-red-600 
-        prose-headings:to-red-800 
-        prose-headings:bg-clip-text 
-        prose-headings:text-transparent
-        text-gray-800
-        [&>p]:text-gray-800
-        [&>ul]:text-gray-800
-        [&>ol]:text-gray-800
-        [&>p>a]:text-blue-600
-        [&>p>a]:hover:text-blue-700
-        [&>p>a]:underline
-        [&>p>code]:bg-gray-100
-        [&>p>code]:px-2
-        [&>p>code]:py-1
-        [&>p>code]:rounded
-        [&>p>code]:text-red-600
-        [&>h1]:text-4xl
-        [&>h1]:mb-6
-        [&>h2]:text-3xl
-        [&>h2]:mt-12
-        [&>h2]:mb-6
-        [&>h3]:text-2xl
-        [&>h3]:mt-10
-        [&>h3]:mb-4
-        [&>h3]:text-gray-800
-        [&>p]:text-gray-800
-        [&>p]:leading-relaxed
-        [&>p]:mb-6
-        [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4
-        [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4
-        [&_li]:text-gray-800 [&_li]:mb-2 [&_li]:leading-relaxed
-        prose-strong:text-gray-900
-        prose-li:text-gray-900
-        prose-a:text-red-600 
-        hover:prose-a:text-red-700 
-        prose-img:rounded-xl 
-        prose-img:border 
-        prose-img:border-gray-200 
-        prose-blockquote:not-italic 
-        prose-blockquote:bg-gray-50 
-        prose-blockquote:border-l-red-400
-        prose-blockquote:border-l-4
-        prose-blockquote:text-gray-800"
-      >
+      <div className={proseClasses}>
         <PortableText
           value={content}
           components={components}
