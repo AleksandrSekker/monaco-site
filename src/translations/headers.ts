@@ -108,6 +108,25 @@ export const blogHeaders: Record<Locale, HeaderTranslations> = {
 };
 
 // Contact Section
+// Process Section
+export const processHeaders: Record<Locale, HeaderTranslations> = {
+  en: {
+    subtitle: 'How it works',
+    title: '5 steps to account, cards and credit line',
+    description: 'Our streamlined process ensures a smooth and efficient experience from start to finish.',
+  },
+  fr: {
+    subtitle: 'Comment ça marche',
+    title: '5 étapes vers votre compte, cartes et ligne de crédit',
+    description: 'Notre processus rationalisé garantit une expérience fluide et efficace du début à la fin.',
+  },
+  ru: {
+    subtitle: 'Как это работает',
+    title: '5 шагов к открытию счета, картам и кредитной линии',
+    description: 'Наш отлаженный процесс обеспечивает бесперебойный и эффективный опыт от начала до конца.',
+  },
+};
+
 export const contactHeaders: Record<Locale, Omit<HeaderTranslations, 'subtitle'>> = {
   en: {
     title: 'Get in Touch',
@@ -120,22 +139,6 @@ export const contactHeaders: Record<Locale, Omit<HeaderTranslations, 'subtitle'>
   ru: {
     title: 'Свяжитесь с нами',
     description: 'Наша команда готова помочь вам с вашими финансовыми потребностями.',
-  },
-};
-
-// Process Section
-export const processHeaders: Record<Locale, Omit<HeaderTranslations, 'subtitle'>> = {
-  en: {
-    title: 'Our Process',
-    description: 'A clear and transparent approach to managing your financial affairs.',
-  },
-  fr: {
-    title: 'Notre Processus',
-    description: 'Une approche claire et transparente pour gérer vos affaires financières.',
-  },
-  ru: {
-    title: 'Наш процесс',
-    description: 'Четкий и прозрачный подход к управлению вашими финансовыми делами.',
   },
 };
 

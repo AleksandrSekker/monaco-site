@@ -8,6 +8,7 @@ import localeString from './localeString'
 import localeText from './localeText'
 import localeBlockContent from './localeBlockContent'
 import stats from './stats'
+import processStep from './processStep'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
@@ -17,7 +18,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   author,
   category,
   stats,
-
+  processStep,
   // Localization types
   localeString,
   localeText,

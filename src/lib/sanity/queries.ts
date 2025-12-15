@@ -144,3 +144,19 @@ export const statsQuery = `*[_type == "stats"] {
     alt
   }
 }`;
+export const processQuery = `*[_type == "processStep"] | order(order asc) {
+  _id,
+  order,
+  title,
+  description,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;

@@ -29,6 +29,7 @@ export function getLocalizedString(
   return localizedContent[lang] || localizedContent.en || Object.values(localizedContent)[0] || '';
 }
 import { heroQuery, servicesQuery, pricingQuery, casesQuery, aboutQuery, contactQuery } from './queries';
+import { ProcessStep } from '@/translations/process';
 
 export async function getHero(): Promise<Hero | null> {
   if (!isSanityConfigured || !client) {
@@ -203,4 +204,49 @@ export async function getStats() {
 
   const data = await client.fetch(query);
   return (data?.items || []) as StatItem[];
+}
+
+export const processQuery = `*[_type == "processStep"] | order(order asc) {
+  _id,
+  order,
+  title,
+  description,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;
+export async function getProcessSteps(): Promise<ProcessStep[]> {
+  if (!isSanityConfigured) return [];
+
+  try {
+    const query = `*[_type == "processStep"] | order(order asc) {
+      _id,
+      order,
+      title,
+      description,
+      image {
+        _type,
+        asset->{
+          _id,
+          url,
+          metadata {
+            lqip
+          }
+        }
+      }
+    }`;
+
+    const data = await client.fetch(query);
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching process steps:', error);
+    return [];
+  }
 }
