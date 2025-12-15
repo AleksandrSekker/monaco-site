@@ -14,8 +14,17 @@ export interface SanityField {
   type: string;
   validation?: (rule: ValidationRule) => ValidationRule;
   options?: Record<string, unknown>;
-  of?: Array<{ type: string }>;
+  of?: Array<{
+    type: string;
+    fields?: SanityField[];
+  }>;
   fields?: SanityField[];
+}
+
+// Define the preview type
+export interface SanityPreview<T = Record<string, unknown>> {
+  select?: Record<string, string>;
+  prepare: (value: T) => { title: string; subtitle?: string };
 }
 
 // Define the document schema type
@@ -24,6 +33,7 @@ export interface SanitySchema {
   title: string;
   type: string;
   fields: SanityField[];
+  preview?: SanityPreview;
 }
 
 // Type for the validation function

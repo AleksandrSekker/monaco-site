@@ -7,6 +7,7 @@ import category from './category'
 import localeString from './localeString'
 import localeText from './localeText'
 import localeBlockContent from './localeBlockContent'
+import stats from './stats'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
@@ -15,6 +16,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   pricing,
   author,
   category,
+  stats,
 
   // Localization types
   localeString,

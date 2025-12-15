@@ -115,3 +115,22 @@ export const aboutQuery = `*[_type == "about"][0] {
     }
   }
 }`;
+
+export const statsQuery = `*[_type == "stats"] {
+  _id,
+  _type,
+  title,
+  value,
+  description,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    },
+    alt
+  }
+}`;

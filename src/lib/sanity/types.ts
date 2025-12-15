@@ -135,3 +135,29 @@ export interface Contact {
   phone: string;
   email: string;
 }
+export interface StatItem {
+  _key: string;
+  title: LocaleString;
+  value: string;
+  description: LocaleText;
+}
+
+export interface Stats {
+  _id: string;
+  _type: 'stats';
+  title: LocaleString;
+  value: LocaleString;
+  description: LocaleText;
+  image?: {
+    _type: 'image';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+      url: string;
+      metadata?: {
+        lqip?: string;
+      };
+    };
+    alt?: string;
+  };
+}
