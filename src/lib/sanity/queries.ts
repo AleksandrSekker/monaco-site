@@ -89,7 +89,17 @@ export const pricingQuery = `*[_type == "pricing"] | order(order asc) {
     "included": included
   },
   isPopular,
-  order
+  order,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
 }`;
 
 export const aboutQuery = `*[_type == "about"][0] {
@@ -113,5 +123,24 @@ export const aboutQuery = `*[_type == "about"][0] {
       platform,
       url
     }
+  }
+}`;
+
+export const statsQuery = `*[_type == "stats"] {
+  _id,
+  _type,
+  title,
+  value,
+  description,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    },
+    alt
   }
 }`;

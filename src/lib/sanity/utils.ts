@@ -1,6 +1,6 @@
 import { client, isSanityConfigured } from './client';
 import type { Hero, Service, PricingTier, Case, BlogPost, About, Contact, LocaleString, LocaleText } from './types';
-
+import { StatItem } from './types';
 export interface I18nString {
   _type: 'i18nString';
   en: string;
@@ -189,4 +189,18 @@ export async function getContact(): Promise<Contact | null> {
     console.error('Error fetching contact:', error);
     return null;
   }
+}
+
+export async function getStats() {
+  const query = `*[_type == "stats"][0] {
+    items[] {
+      _key,
+      title->{en, fr, ru},
+      value,
+      description->{en, fr, ru}
+    }
+  }`;
+
+  const data = await client.fetch(query);
+  return (data?.items || []) as StatItem[];
 }

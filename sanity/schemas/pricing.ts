@@ -21,6 +21,15 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'image',
+      title: 'Icon',
+      type: 'image',
+      description: 'Optional icon for this pricing tier',
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
       name: 'title',
       title: 'Title',
       type: 'localeString',
