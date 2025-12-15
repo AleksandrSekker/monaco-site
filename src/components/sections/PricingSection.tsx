@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { getPricingTiers } from '../../lib/sanity/utils';
-import type { PricingTier, LocaleString, LocaleText } from '../../lib/sanity/types';
+import { getPricingTiers } from '@/lib/sanity/utils';
+import type { PricingTier, LocaleString, LocaleText } from '@/lib/sanity/types';
 import { pricingHeaders } from '@/translations/headers';
 import { getPricingTranslations } from '@/translations/pricing';
 import PageHeader from '../ui/PageHeader';
+import { RoundedImage } from '@/components/ui/RoundedImage';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Type for localized content with language codes as keys
@@ -111,7 +112,7 @@ export default function PricingSection() {
       </section>
     );
   }
-
+  console.log('seo', pricingTiers);
   return (
     <section id="pricing" className="border-b border-slate-200 bg-slate-50 py-14 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
@@ -132,6 +133,18 @@ export default function PricingSection() {
                   className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
                 >
                   <div>
+                    {tier.image?.asset?.url && (
+                      <div className="mb-3">
+                        <RoundedImage
+                          src={tier.image.asset.url}
+                          alt={getLocalizedString(tier.title, locale) || 'Pricing tier'}
+                          size={48}
+                          placeholder="blur"
+                          blurDataURL={tier.image.asset.metadata?.lqip}
+                          className="h-12 w-12"
+                        />
+                      </div>
+                    )}
                     <p className="text-xs font-semibold tracking-[0.25em] text-slate-500 uppercase">
                       {getLocalizedString(tier.title, locale)}
                     </p>
@@ -181,45 +194,60 @@ export default function PricingSection() {
             })}
         </div>
 
-        <div className="mt-8 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+        <div className="mt-8 grid gap-5">
           {sortedTiers
             .filter((tier) => tier.tier === 'crypto')
             .map((tier) => (
-              <div
-                key={tier._id}
-                className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-xs text-slate-700"
-              >
-                <p className="font-semibold text-slate-900">{t.cryptoOnboarding}</p>
-                <p className="mt-1 text-slate-600">{getLocalizedString(tier.description, locale)}</p>
-                <p className="mt-2 text-sm font-semibold text-red-600">
-                  {tier.feeRange ? (
-                    <>
-                      {tier.feeRange.min ? <>{formatCurrency(tier.feeRange.min, false)}</> : null}
-                      {tier.feeRange.max ? <>{`–${formatCurrency(tier.feeRange.max, false)}`}</> : '+'} €
-                    </>
-                  ) : (
-                    getLocalizedString(t.contactUs, locale)
-                  )}
-                </p>
+              <div key={tier._id}>
+                <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-700">
+                  <div className="flex items-start gap-4">
+                    {tier.image?.asset?.url && (
+                      <div className="flex-shrink-0">
+                        <RoundedImage
+                          src={tier.image.asset.url}
+                          alt={getLocalizedString(tier.title, locale) || 'Crypto service'}
+                          size={40}
+                          placeholder="blur"
+                          blurDataURL={tier.image.asset.metadata?.lqip}
+                          className="h-10 w-10"
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-slate-900">{getLocalizedString(tier.title, locale)}</p>
+                      <p className="mt-1 text-slate-600">{getLocalizedString(tier.description, locale)}</p>
+                      <p className="mt-2 font-semibold text-red-600">
+                        {tier.feeRange ? (
+                          <>
+                            {tier.feeRange.min ? <>{formatCurrency(tier.feeRange.min, false)}</> : null}
+                            {tier.feeRange.max ? <>{`–${formatCurrency(tier.feeRange.max, false)}`}</> : '+'} €
+                          </>
+                        ) : (
+                          getLocalizedString(t.contactUs, locale)
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
+                  <p className="font-semibold">{getLocalizedString(t.customTerms, locale)}</p>
+                  <p className="mt-1">{getLocalizedString(t.customTermsDescription, locale)}</p>
+                </div>
               </div>
             ))}
-          <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
-            <p className="font-semibold">{getLocalizedString(t.customTerms, locale)}</p>
-            <p className="mt-1">{getLocalizedString(t.customTermsDescription, locale)}</p>
-          </div>
         </div>
       </div>
     </section>
   );
-}
 
-// Helper function to format currency
-function formatCurrency(amount?: number, showCurrency: boolean = true): string {
-  if (amount === undefined || amount === null) return '';
-  const formatted = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-  return showCurrency ? `${formatted} €` : formatted;
+  // Helper function to format currency
+  function formatCurrency(amount?: number, showCurrency: boolean = true): string {
+    if (amount === undefined || amount === null) return '';
+    const formatted = new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+    return showCurrency ? `${formatted} €` : formatted;
+  }
 }

@@ -36,6 +36,18 @@ export interface PricingTier {
     included: boolean;
   }>;
   isPopular: boolean;
+  image?: {
+    _type: 'image';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+      url: string;
+      metadata?: {
+        lqip?: string;
+      };
+    };
+    alt?: string;
+  };
 }
 
 export interface LocalizedPricingTier extends Omit<PricingTier, 'title' | 'description' | 'features'> {

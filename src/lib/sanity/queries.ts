@@ -89,7 +89,17 @@ export const pricingQuery = `*[_type == "pricing"] | order(order asc) {
     "included": included
   },
   isPopular,
-  order
+  order,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
 }`;
 
 export const aboutQuery = `*[_type == "about"][0] {
