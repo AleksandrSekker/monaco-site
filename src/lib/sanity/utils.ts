@@ -1,6 +1,7 @@
 import { client, isSanityConfigured } from './client';
 import type { Hero, Service, PricingTier, Case, BlogPost, About, Contact, LocaleString, LocaleText } from './types';
 import { StatItem } from './types';
+
 export interface I18nString {
   _type: 'i18nString';
   en: string;
@@ -48,7 +49,8 @@ export async function getServices(): Promise<Service[]> {
     return [];
   }
   try {
-    return await client.fetch<Service[]>(servicesQuery);
+    const services = await client.fetch<Service[]>(servicesQuery);
+    return services || [];
   } catch (error) {
     console.error('Error fetching services:', error);
     return [];

@@ -9,9 +9,19 @@ export const heroQuery = `*[_type == "hero"][0] {
 
 export const servicesQuery = `*[_type == "service"] | order(order asc) {
   _id,
+  order,
   title,
   description,
-  order
+  cta,
+  icon {
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
 }`;
 
 export const casesQuery = `*[_type == "case"] | order(order asc) {

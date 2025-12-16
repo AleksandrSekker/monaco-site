@@ -127,6 +127,7 @@ export const processHeaders: Record<Locale, HeaderTranslations> = {
   },
 };
 
+// Contact Section
 export const contactHeaders: Record<Locale, Omit<HeaderTranslations, 'subtitle'>> = {
   en: {
     title: 'Get in Touch',
