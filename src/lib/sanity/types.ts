@@ -11,9 +11,20 @@ export interface Hero {
 
 export interface Service {
   _id: string;
-  title: string;
-  description: string;
   order: number;
+  title: LocaleString;
+  description: LocaleText;
+  cta: LocaleString;
+  icon?: {
+    asset: {
+      _id: string;
+      url: string;
+      metadata?: {
+        lqip: string;
+      };
+    };
+    alt?: string;
+  };
 }
 
 export interface PricingTier {

@@ -1,6 +1,7 @@
 import { client, isSanityConfigured } from './client';
 import type { Hero, Service, PricingTier, Case, BlogPost, About, Contact, LocaleString, LocaleText } from './types';
 import { StatItem } from './types';
+
 export interface I18nString {
   _type: 'i18nString';
   en: string;
@@ -29,6 +30,7 @@ export function getLocalizedString(
   return localizedContent[lang] || localizedContent.en || Object.values(localizedContent)[0] || '';
 }
 import { heroQuery, servicesQuery, pricingQuery, casesQuery, aboutQuery, contactQuery } from './queries';
+import { ProcessStep } from '@/translations/process';
 
 export async function getHero(): Promise<Hero | null> {
   if (!isSanityConfigured || !client) {
@@ -47,7 +49,8 @@ export async function getServices(): Promise<Service[]> {
     return [];
   }
   try {
-    return await client.fetch<Service[]>(servicesQuery);
+    const services = await client.fetch<Service[]>(servicesQuery);
+    return services || [];
   } catch (error) {
     console.error('Error fetching services:', error);
     return [];
@@ -203,4 +206,49 @@ export async function getStats() {
 
   const data = await client.fetch(query);
   return (data?.items || []) as StatItem[];
+}
+
+export const processQuery = `*[_type == "processStep"] | order(order asc) {
+  _id,
+  order,
+  title,
+  description,
+  image {
+    _type,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;
+export async function getProcessSteps(): Promise<ProcessStep[]> {
+  if (!isSanityConfigured) return [];
+
+  try {
+    const query = `*[_type == "processStep"] | order(order asc) {
+      _id,
+      order,
+      title,
+      description,
+      image {
+        _type,
+        asset->{
+          _id,
+          url,
+          metadata {
+            lqip
+          }
+        }
+      }
+    }`;
+
+    const data = await client.fetch(query);
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching process steps:', error);
+    return [];
+  }
 }
