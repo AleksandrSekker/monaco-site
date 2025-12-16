@@ -6,7 +6,6 @@ import { getLocalizedString } from '@/sanity/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 import type { Service } from '@/lib/sanity/types';
-import Image from 'next/image';
 import { RoundedImage } from './ui/RoundedImage';
 
 export default function ServicesList() {
