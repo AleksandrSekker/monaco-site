@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServiceBySlug } from '@/lib/sanity/utils';
 
-export async function GET(request: Request, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const service = await getServiceBySlug(params.slug);
 
