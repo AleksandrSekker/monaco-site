@@ -5,12 +5,25 @@ interface RoundedImageProps extends Omit<ImageProps, 'className' | 'width' | 'he
   size?: number;
   className?: string;
   border?: boolean;
+  variant?: 'default' | 'service';
 }
 
-export function RoundedImage({ src, alt, size = 48, className = '', border = true, ...props }: RoundedImageProps) {
+export function RoundedImage({
+  src,
+  alt,
+  size = 48,
+  className = '',
+  border = true,
+  variant = 'default',
+  ...props
+}: RoundedImageProps) {
+  const isServiceVariant = variant === 'service';
+
   return (
     <div
-      className={`relative ${border ? 'border-2 border-slate-200' : ''} rounded-full`}
+      className={`relative ${!isServiceVariant && border ? 'border-2 border-slate-200' : ''} ${
+        isServiceVariant ? '' : 'rounded-full'
+      }`}
       style={{ width: `${size}px`, height: `${size}px` }}
     >
       <Image
@@ -18,7 +31,7 @@ export function RoundedImage({ src, alt, size = 48, className = '', border = tru
         alt={alt}
         width={size}
         height={size}
-        className={`object-cover w-full h-full rounded-full ${className}`}
+        className={`object-contain w-full h-full ${isServiceVariant ? '' : 'rounded-full'} ${className}`}
         style={{ width: '100%', height: '100%' }}
         {...props}
       />

@@ -53,7 +53,9 @@ export default function ServicesList() {
                 <RoundedImage
                   src={service.icon.asset.url}
                   alt={service.icon.alt || getLocalizedString(service.title, locale) || 'Service icon'}
-                  className="h-12 w-12 object-contain"
+                  className="h-12 w-12"
+                  variant="service"
+                  border={false}
                 />
               </div>
             )}
