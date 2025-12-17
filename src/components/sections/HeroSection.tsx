@@ -1,75 +1,167 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { getHero } from '@/lib/sanity/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { heroTranslations } from '@/translations/hero';
 
-export default function HeroSection() {
-  const { locale } = useParams<{ locale: string }>();
-  const t = heroTranslations[locale as keyof typeof heroTranslations] || heroTranslations.en;
+interface HeroImage {
+  asset: {
+    _ref: string;
+    _type: 'reference';
+    url: string;
+  };
+  alt?: string;
+}
 
+interface HeroData {
+  desktopImage?: HeroImage;
+  mobileImage?: HeroImage;
+}
+
+export default function HeroSection() {
+  const { locale } = useLanguage();
+  const [heroData, setHeroData] = useState<HeroData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Get translations for the current locale, fallback to English
+  const t = heroTranslations[locale] || heroTranslations.en;
+  useEffect(() => {
+    const fetchHeroData = async () => {
+      try {
+        const data = await getHero();
+        setHeroData({
+          desktopImage: data?.desktopImage,
+          mobileImage: data?.mobileImage,
+        });
+      } catch (error) {
+        console.error('Error fetching hero data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHeroData();
+  }, []);
+
+  if (isLoading) {
+    return <div className="min-h-[600px] bg-gray-100" />;
+  }
+
+  if (!heroData) {
+    return <div className="min-h-[600px] bg-gray-100" />;
+  }
+  console.log('heroData.desktopImage?.asset?.url', heroData.desktopImage?.asset?.url);
   return (
-    <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-b from-white via-slate-50 to-white">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 top-[-10rem] h-80 w-80 rounded-full bg-red-100 blur-3xl" />
-        <div className="absolute right-[-10rem] top-40 h-96 w-96 rounded-full bg-blue-100 blur-3xl" />
+    <section className="relative min-h-[600px] overflow-hidden">
+      {/* Background Images */}
+      <div className="absolute inset-0 ">
+        {/* Desktop Background */}
+        {heroData.desktopImage?.asset?.url && (
+          <div className="hidden h-full w-full md:block relative">
+            <div className="absolute inset-0 z-10" />
+            <Image
+              src={heroData.desktopImage.asset.url}
+              alt={heroData.desktopImage.alt || 'Monaco Financial Solutions'}
+              fill
+              className="object-cover"
+              priority
+              quality={85}
+              sizes="100vw"
+            />
+          </div>
+        )}
+
+        {/* Mobile Background */}
+        {heroData.mobileImage?.asset?.url ? (
+          <div className="block h-full w-full md:hidden relative">
+            <div className="absolute inset-0  z-10" />
+            <Image
+              src={heroData.mobileImage.asset.url}
+              alt={heroData.mobileImage.alt || 'Monaco Financial Solutions'}
+              fill
+              className="object-cover"
+              priority
+              quality={85}
+              sizes="100vw"
+            />
+          </div>
+        ) : (
+          heroData.desktopImage?.asset?.url && (
+            <div className="block h-full w-full md:hidden relative">
+              <div className="absolute inset-0 bg-black/40 z-10" />
+              <Image
+                src={heroData.desktopImage.asset.url}
+                alt={heroData.desktopImage.alt || 'Monaco Financial Solutions'}
+                fill
+                className="object-cover"
+                priority
+                quality={85}
+                sizes="100vw"
+              />
+            </div>
+          )
+        )}
       </div>
 
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16 lg:flex-row lg:items-center lg:justify-between lg:py-24 lg:px-6">
+      {/* Content */}
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16 lg:flex-row lg:items-start lg:justify-between lg:py-24 lg:px-6">
+        {/* Left column - Main content */}
         <div className="max-w-xl space-y-6">
-          <p className="text-xs font-semibold tracking-[0.35em] text-slate-500 uppercase">{t.tagline}</p>
-          <h1 className="text-balance text-4xl font-light tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <p className="text-xs font-semibold tracking-[0.35em] text-white uppercase">{t.tagline}</p>
+          <h1 className="text-4xl font-light tracking-tight text-white sm:text-5xl lg:text-6xl">
             {t.title}
-            <span className="font-semibold text-red-600">{t.highlightedTitle}</span>
+            <span className="block text-red-600">{t.highlightedTitle}</span>
           </h1>
-          <p className="max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">{t.description}</p>
-          <div className="flex flex-wrap items-center gap-4">
+          <p className="text-lg leading-relaxed text-white">{t.description}</p>
+
+          <div className="flex flex-wrap gap-4">
             <a
-              href="#contacts"
-              className="inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-red-600/30 hover:bg-red-700"
+              href="#contact"
+              className="inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-red-600/30 hover:bg-red-700 transition-colors duration-200"
             >
               {t.cta}
             </a>
-            <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs text-slate-700">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+
+            <div className="flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs text-white backdrop-blur-sm">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300">
                 ✓
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="font-semibold">{t.guarantee.text}</span>
-                <span className="text-[11px] text-slate-500">{t.guarantee.subtext}</span>
+                <span className="font-semibold text-black">{t.guarantee.text}</span>
+                <span className="text-[11px] text-black">{t.guarantee.subtext}</span>
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-4 text-xs text-slate-500">
-            <div>{t.stats}</div>
-          </div>
+
+          {/* Stats Section */}
+          <p className="pt-4 text-sm text-white">{t.stats}</p>
         </div>
 
-        <div className="relative w-full max-w-md">
-          <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full border border-red-200" />
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5 shadow-lg">
-            <div className="flex items-center justify-between text-xs text-slate-500">
-              <span>{t.card.title}</span>
-              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] text-emerald-700">
+        {/* Right column - Card section */}
+        <div className="w-full max-w-md lg:sticky lg:top-24 bg-white rounded-xl mt-5">
+          <div className="rounded-xl p-6 backdrop-blur-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-medium text-black">{t.card.title}</h3>
+              <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400">
                 {t.card.badge}
               </span>
             </div>
-            <div className="mt-5 space-y-3 text-sm text-slate-900">
+            <div className="space-y-4">
               {t.card.cases.map((item, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center justify-between rounded-2xl border ${index === 1 ? 'bg-slate-50' : 'bg-white'} px-4 py-3 ${index === 2 ? 'border-dashed' : 'border-slate-200'}`}
-                >
-                  <div>
-                    <p className="text-xs text-slate-500">{item.client}</p>
-                    <p className="text-sm font-medium">{item.description}</p>
+                <div key={index} className="border-t border-white/5 pt-4 first:border-0 first:pt-0">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium text-black">{item.client}</p>
+                      <p className="text-sm text-black">{item.description}</p>
+                    </div>
+                    <span className={`text-sm text-${item.timeColor}`}>{item.time}</span>
                   </div>
-                  <span className={`text-[11px] text-${item.timeColor}`}>{item.time}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-5 border-t border-slate-200 pt-4 text-xs text-slate-500">
-              <p>{t.card.disclaimer}</p>
-            </div>
+            <p className="mt-4 text-xs text-black">{t.card.disclaimer}</p>
           </div>
         </div>
       </div>

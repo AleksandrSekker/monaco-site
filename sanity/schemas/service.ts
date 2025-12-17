@@ -38,6 +38,7 @@ export default defineType({
       type: 'image',
       options: {
         hotspot: true,
+        accept: 'image/svg+xml,image/jpeg,image/png,image/webp',
       },
       fields: [
         {

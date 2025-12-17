@@ -63,6 +63,42 @@ interface PricingTier {
   }>;
   isPopular: boolean;
 }
+interface Image {
+  _type: 'image';
+  asset: {
+    _ref: string;
+    _type: 'reference';
+  };
+  alt?: string;
+}
 
+interface CardCase {
+  client?: string;
+  description?: string;
+  time?: string;
+  timeColor?: string;
+}
+
+interface Card {
+  title?: string;
+  badge?: string;
+  cases?: CardCase[];
+  disclaimer?: string;
+}
+
+interface Hero {
+  title?: string;
+  highlightedTitle?: string;
+  description?: string;
+  tagline?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  guaranteeText?: string;
+  guaranteeSubtext?: string;
+  stats?: string;
+  desktopImage?: Image;
+  mobileImage?: Image;
+  card?: Card;
+}
 // Export all types
-export type { Case, LocaleString, LocaleText, PricingTier };
+export type { Case, LocaleString, LocaleText, PricingTier, Image, CardCase, Card, Hero };

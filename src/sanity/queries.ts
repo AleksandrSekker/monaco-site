@@ -51,3 +51,35 @@ export const blogPostsQuery = `*[_type == "post"] | order(publishedAt desc) {
     description
   }
 }`;
+
+export const heroQuery = `*[_type == "hero"][0] {
+  tagline,
+  title,
+  highlightedTitle,
+  description,
+  tagline,
+  ctaText,
+  ctaLink,
+  guaranteeText,
+  guaranteeSubtext,
+  stats,
+  desktopImage {
+    ...,
+    "alt": coalesce(alt, "Monaco Financial Solutions")
+  },
+  mobileImage {
+    ...,
+    "alt": coalesce(alt, "Monaco Financial Solutions")
+  },
+  card {
+    title,
+    badge,
+    disclaimer,
+    cases[] {
+      client,
+      description,
+      time,
+      timeColor
+    }
+  }
+}`;
