@@ -14,7 +14,16 @@ export interface Service {
   order: number;
   title: LocaleString;
   description: LocaleText;
+  longDescription: LocaleText;
   cta: LocaleString;
+  slug: {
+    current?: string;
+  };
+  features?: Array<{
+    _key: string;
+    title: LocaleString;
+    description?: LocaleText;
+  }>;
   icon?: {
     asset: {
       _id: string;

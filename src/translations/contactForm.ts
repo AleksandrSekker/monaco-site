@@ -11,40 +11,52 @@ export const contactFormTranslations: Record<
     taskPlaceholder: string;
     submitButton: string;
     privacyText: string;
+    taskAboutService: string;
+    sendingButton: string;
+    successMessage: string;
+    errorMessage: string;
   }
 > = {
   en: {
-    nameLabel: 'Name / Company',
-    namePlaceholder: 'e.g., John, Smith Family, Company Ltd.',
-    contactLabel: 'Contact (Telegram / WhatsApp / Email)',
-    contactPlaceholder: '@username / +XXX / email',
-    taskLabel: 'Your Request',
-    taskPlaceholder:
-      'e.g., Need accounts and cards in Monaco / credit line against portfolio / crypto onboarding from 300k €',
-    submitButton: 'Send Message',
-    privacyText: 'By clicking the button, you agree to the processing of personal data and privacy policy.',
+    nameLabel: 'Name',
+    namePlaceholder: 'Your name',
+    contactLabel: 'Contact',
+    contactPlaceholder: 'Email or phone',
+    taskLabel: 'Your task',
+    taskPlaceholder: 'How can we help you?',
+    taskAboutService: 'I am interested in: ',
+    submitButton: 'Send Request',
+    sendingButton: 'Sending...',
+    successMessage: 'Thank you! Your message has been sent. We will contact you soon.',
+    errorMessage: 'An error occurred. Please try again later.',
+    privacyText: 'By submitting this form, you agree to our Privacy Policy',
   },
   fr: {
-    nameLabel: 'Nom / Société',
-    namePlaceholder: 'Ex. : Jean, Famille Martin, Société SARL',
-    contactLabel: 'Contact (Télégram / WhatsApp / E-mail)',
-    contactPlaceholder: '@utilisateur / +XXX / email',
+    nameLabel: 'Nom',
+    namePlaceholder: 'Votre nom',
+    contactLabel: 'Contact',
+    contactPlaceholder: 'Email ou téléphone',
     taskLabel: 'Votre demande',
-    taskPlaceholder:
-      'Ex. : besoin de comptes et cartes à Monaco / ligne de crédit contre portefeuille / onboarding crypto à partir de 300k €',
-    submitButton: 'Envoyer',
-    privacyText:
-      'En cliquant sur le bouton, vous acceptez le traitement des données personnelles et la politique de confidentialité.',
+    taskPlaceholder: 'Comment pouvons-nous vous aider?',
+    taskAboutService: 'Je suis intéressé par : ',
+    submitButton: 'Envoyer la demande',
+    sendingButton: 'Envoi en cours...',
+    successMessage: 'Merci! Votre message a été envoyé. Nous vous contacterons bientôt.',
+    errorMessage: 'Une erreur est survenue. Veuillez réessayer plus tard.',
+    privacyText: 'En soumettant ce formulaire, vous acceptez notre Politique de confidentialité',
   },
   ru: {
-    nameLabel: 'Имя / компания',
-    namePlaceholder: 'Например: Иван, семья Б., компания В.',
-    contactLabel: 'Контакт (Telegram / WhatsApp / e-mail)',
-    contactPlaceholder: '@username / +XXX / email',
-    taskLabel: 'Ваша задача',
-    taskPlaceholder:
-      'Например: нужен счёт и карты в Монако / кредитная линия под залог портфеля / крипто-ввод от 300k €',
-    submitButton: 'Отправить',
-    privacyText: 'Нажимая на кнопку, вы соглашаетесь с обработкой персональных данных и политикой конфиденциальности.',
+    nameLabel: 'Имя',
+    namePlaceholder: 'Ваше имя',
+    contactLabel: 'Контакт',
+    contactPlaceholder: 'Email или телефон',
+    taskLabel: 'Ваш запрос',
+    taskPlaceholder: 'Как мы можем вам помочь?',
+    taskAboutService: 'Меня интересует: ',
+    submitButton: 'Отправить заявку',
+    sendingButton: 'Отправка...',
+    successMessage: 'Спасибо! Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время.',
+    errorMessage: 'Произошла ошибка. Пожалуйста, попробуйте позже.',
+    privacyText: 'Отправляя эту форму, вы соглашаетесь с нашей Политикой конфиденциальности',
   },
 };
