@@ -12,6 +12,7 @@ export interface SanityField {
   name: string;
   title: string;
   type: string;
+  description?: string;
   validation?: (rule: ValidationRule) => ValidationRule;
   options?: Record<string, unknown>;
   of?: Array<{

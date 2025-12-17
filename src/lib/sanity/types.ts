@@ -1,12 +1,29 @@
 // TypeScript типы для данных из Sanity
 
 export interface Hero {
+  tagline?: string;
   title: string;
   subtitle: string;
   ctaText: string;
   guaranteeText: string;
   guaranteeSubtext: string;
   stats: string;
+  desktopImage?: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+      url: string;
+    };
+    alt?: string;
+  };
+  mobileImage?: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+      url: string;
+    };
+    alt?: string;
+  };
 }
 
 export interface Service {

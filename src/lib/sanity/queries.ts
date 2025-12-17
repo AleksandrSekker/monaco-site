@@ -4,7 +4,23 @@ export const heroQuery = `*[_type == "hero"][0] {
   ctaText,
   guaranteeText,
   guaranteeSubtext,
-  stats
+  stats,
+  desktopImage {
+    asset->{
+      _ref,
+      _type,
+      url
+    },
+    alt
+  },
+  mobileImage {
+    asset->{
+      _ref,
+      _type,
+      url
+    },
+    alt
+  }
 }`;
 
 export const servicesQuery = `*[_type == "service"] | order(order asc) {

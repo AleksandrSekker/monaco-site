@@ -10,6 +10,7 @@ import localeBlockContent from './localeBlockContent'
 import stats from './stats'
 import processStep from './processStep'
 import service from './service'
+import hero from './hero'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
@@ -18,6 +19,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   pricing,
   author,
   category,
+  hero,
   stats,
   processStep,
   service,

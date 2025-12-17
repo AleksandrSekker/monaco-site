@@ -6,6 +6,12 @@ const hero: SanitySchema = {
   type: 'document',
   fields: [
     {
+      name: 'tagline',
+      type: 'string',
+      title: 'Tagline',
+      description: 'Short text that appears above the main title',
+    },
+    {
       name: 'title',
       type: 'string',
       title: 'Title',
@@ -37,6 +43,38 @@ const hero: SanitySchema = {
       name: 'stats',
       type: 'text',
       title: 'Stats Text',
+    },
+    {
+      name: 'desktopImage',
+      title: 'Desktop Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+          description: 'Important for SEO and accessibility',
+        },
+      ],
+    },
+    {
+      name: 'mobileImage',
+      title: 'Mobile Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+          description: 'Important for SEO and accessibility',
+        },
+      ],
     },
   ],
 };
