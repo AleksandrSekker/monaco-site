@@ -44,6 +44,39 @@ export async function getHero(): Promise<Hero | null> {
   }
 }
 
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  if (!isSanityConfigured || !client) {
+    return null;
+  }
+  try {
+    const query = `*[_type == "service" && slug.current == $slug][0] {
+      _id,
+      title,
+      description,
+      longDescription,
+      cta,
+      slug,
+      features[] {
+        title,
+        description
+      },
+      icon {
+        asset->{
+          _id,
+          url,
+          metadata {
+            lqip
+          }
+        }
+      }
+    }`;
+    return await client.fetch<Service>(query, { slug });
+  } catch (error) {
+    console.error('Error fetching service by slug:', error);
+    return null;
+  }
+}
+
 export async function getServices(): Promise<Service[]> {
   if (!isSanityConfigured || !client) {
     return [];

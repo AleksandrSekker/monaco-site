@@ -13,6 +13,7 @@ export const servicesQuery = `*[_type == "service"] | order(order asc) {
   title,
   description,
   cta,
+  slug,
   icon {
     asset->{
       _id,

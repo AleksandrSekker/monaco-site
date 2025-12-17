@@ -17,12 +17,15 @@
     "@portabletext/react": "^5.0.0",
     "@portabletext/types": "^3.0.0",
     "@sanity/vision": "4.20.3",
+    "@types/nodemailer": "^7.0.4",
     "classnames": "^2.5.1",
     "next": "^16.0.7",
     "next-intl": "^4.5.7",
     "next-sanity": "^11.6.10",
+    "nodemailer": "^7.0.11",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-hook-form": "^7.68.0",
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
