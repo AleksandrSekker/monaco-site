@@ -1,13 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { getServiceBySlug } from '@/lib/sanity/utils';
 
-type RouteParams = {
-  params: { slug: string };
-};
-
-export async function GET(request: Request, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const service = await getServiceBySlug(params.slug);
+    const { slug } = await params;
+    const service = await getServiceBySlug(slug);
 
     if (!service) {
       return new NextResponse(JSON.stringify({ error: 'Service not found' }), {
