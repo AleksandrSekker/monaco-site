@@ -2,7 +2,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useRef, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { Locale } from '@/lib/i18n';
 import { contactFormTranslations } from '@/translations/contactForm';
 
@@ -29,14 +29,10 @@ export default function ContactFormClient({
     contactFormTranslations[currentLocale as keyof typeof contactFormTranslations] || contactFormTranslations.en;
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!formRef.current) return;
-
-    const formData = new FormData(formRef.current);
+    const formData = new FormData(e.currentTarget);
     const data = {
       name: formData.get('name') as string,
       email: formData.get('contact') as string,
@@ -59,7 +55,7 @@ export default function ContactFormClient({
 
       if (response.ok) {
         setSubmitStatus({ success: true, message: t.successMessage });
-        formRef.current.reset();
+        e.currentTarget.reset();
       } else {
         throw new Error('Failed to send message');
       }
@@ -74,7 +70,7 @@ export default function ContactFormClient({
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="mt-4 space-y-3">
+    <form onSubmit={handleSubmit} className="mt-4 space-y-3">
       <div>
         <label className="text-[11px] text-slate-600">{t.nameLabel} *</label>
         <input
