@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev', // Keep this for testing
+      from: process.env.EMAIL_FROM || 'noreply@monaco-site-production.up.railway.app', // Keep this for testing
       to: process.env.EMAIL_TO || 'sekkerpleksandr@gmail.com',
       subject: `New Contact: ${body.name} - ${body.service || 'General Inquiry'}`,
       text: `
