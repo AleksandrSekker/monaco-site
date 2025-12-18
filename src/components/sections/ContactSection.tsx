@@ -11,7 +11,7 @@ export default function ContactSection() {
   const t = contactTranslations[locale as Locale] || contactTranslations.en;
 
   return (
-    <section id="contacts" className="bg-white py-14 lg:py-20">
+    <section id="contact" className="bg-white py-14 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
           <div>
@@ -47,6 +47,12 @@ export default function ContactSection() {
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-slate-500">{t.contactMethods.phone.label}</span>
                 <span className="text-sm text-slate-900">{t.contactMethods.phone.number}</span>
+              </div>{' '}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold text-slate-500">{t.contactMethods.email.label}</span>
+                <a href="mailto:monacofinancialsolution@gmail.com">
+                  <span className="text-sm text-slate-900">{t.contactMethods.email.button}</span>
+                </a>
               </div>
             </div>
           </div>

@@ -18,6 +18,10 @@ type ContactTranslations = {
       label: string;
       number: string;
     };
+    email: {
+      label: string;
+      button: string;
+    };
   };
   form: {
     title: string;
@@ -44,6 +48,10 @@ export const contactTranslations: Record<Locale, ContactTranslations> = {
         label: 'Phone',
         number: '+377 XXX XXX XXX',
       },
+      email: {
+        label: 'Email',
+        button: 'monacofinancialsolution@gmail.com',
+      },
     },
     form: {
       title: 'Consultation Request',
@@ -67,6 +75,10 @@ export const contactTranslations: Record<Locale, ContactTranslations> = {
       phone: {
         label: 'Téléphone',
         number: '+377 XXX XXX XXX',
+      },
+      email: {
+        label: 'E-mail',
+        button: 'monacofinancialsolution@gmail.com',
       },
     },
     form: {
@@ -92,6 +104,10 @@ export const contactTranslations: Record<Locale, ContactTranslations> = {
       phone: {
         label: 'Телефон',
         number: '+377 XXX XXX XXX',
+      },
+      email: {
+        label: 'Электронная почта',
+        button: 'monacofinancialsolution@gmail.com',
       },
     },
     form: {

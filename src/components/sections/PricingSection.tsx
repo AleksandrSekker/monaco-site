@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { motion, Variants } from 'framer-motion';
 import { getPricingTiers } from '@/lib/sanity/utils';
 import type { PricingTier, LocaleString, LocaleText } from '@/lib/sanity/types';
 import { pricingHeaders } from '@/translations/headers';
@@ -34,6 +35,38 @@ function getLocalizedString(
 }
 
 // We'll use the PricingTier type directly
+
+// Animation variants
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+  hover: {
+    y: -5,
+    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+    transition: {
+      duration: 0.2,
+      ease: 'easeOut',
+    },
+  },
+};
 
 export default function PricingSection() {
   const [pricingTiers, setPricingTiers] = useState<Array<PricingTier>>([]);
@@ -116,11 +149,21 @@ export default function PricingSection() {
   return (
     <section id="pricing" className="border-b border-slate-200 bg-slate-50 py-14 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"
+        >
           <PageHeader translations={pricingHeaders} />
-        </div>
+        </motion.div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="mt-8 grid gap-5 md:grid-cols-3"
+        >
           {sortedTiers
             .filter((tier) => tier.tier !== 'crypto')
             .map((tier) => {
@@ -128,8 +171,10 @@ export default function PricingSection() {
               const feeRange = tier.feeRange;
 
               return (
-                <div
+                <motion.div
                   key={tier._id}
+                  variants={itemVariants}
+                  whileHover="hover"
                   className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
                 >
                   <div>
@@ -189,16 +234,16 @@ export default function PricingSection() {
                   >
                     {t.getAQuote}
                   </a>
-                </div>
+                </motion.div>
               );
             })}
-        </div>
+        </motion.div>
 
-        <div className="mt-8 grid gap-5">
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="mt-8 grid gap-5">
           {sortedTiers
             .filter((tier) => tier.tier === 'crypto')
             .map((tier) => (
-              <div key={tier._id}>
+              <motion.div key={tier._id} variants={itemVariants} whileHover="hover">
                 <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-700">
                   <div className="flex items-start gap-4">
                     {tier.image?.asset?.url && (
@@ -233,9 +278,9 @@ export default function PricingSection() {
                   <p className="font-semibold">{getLocalizedString(t.customTerms, locale)}</p>
                   <p className="mt-1">{getLocalizedString(t.customTermsDescription, locale)}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
