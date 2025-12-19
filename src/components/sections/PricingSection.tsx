@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, Variants } from 'framer-motion';
 import { getPricingTiers } from '@/lib/sanity/utils';
 import type { PricingTier, LocaleString, LocaleText } from '@/lib/sanity/types';
@@ -9,6 +9,7 @@ import { getPricingTranslations } from '@/translations/pricing';
 import PageHeader from '../ui/PageHeader';
 import { RoundedImage } from '@/components/ui/RoundedImage';
 import { useLanguage } from '@/contexts/LanguageContext';
+import QuickApplyModal from '@/components/ui/QuickApplyModal';
 
 // Type for localized content with language codes as keys
 type LocalizedContent = LocaleString | LocaleText | string;
@@ -72,8 +73,17 @@ export default function PricingSection() {
   const [pricingTiers, setPricingTiers] = useState<Array<PricingTier>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
   const { locale } = useLanguage();
   const t = getPricingTranslations(locale);
+  const contactSectionRef = useRef<HTMLElement | null>(null);
+
+  // Handle scroll to contact section
+  useEffect(() => {
+    if (contactSectionRef.current) {
+      contactSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedTier]);
 
   // Single effect for data fetching and debugging
   useEffect(() => {
@@ -147,7 +157,7 @@ export default function PricingSection() {
   }
   console.log('seo', pricingTiers);
   return (
-    <section id="pricing" className="border-b border-slate-200 bg-slate-50 py-14 lg:py-20">
+    <section id="pricing" className="border-b border-slate-200 bg-slate-50 py-14 lg:py-20" ref={contactSectionRef}>
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -228,12 +238,12 @@ export default function PricingSection() {
                     </p>
                     <p className="mt-3 text-xs text-slate-600">{getLocalizedString(tier.description, locale)}</p>
                   </div>
-                  <a
-                    href="#contact"
-                    className="mt-4 inline-flex items-center justify-center rounded-full border border-red-600 px-4 py-2 text-[11px] font-semibold text-red-600 hover:bg-red-50"
+                  <button
+                    onClick={() => setSelectedTier(tier)}
+                    className="mt-4 w-full inline-flex items-center justify-center rounded-full border border-red-600 px-4 py-2 text-[11px] font-semibold text-red-600 hover:bg-red-50 transition-colors"
                   >
                     {t.getAQuote}
-                  </a>
+                  </button>
                 </motion.div>
               );
             })}
@@ -282,6 +292,13 @@ export default function PricingSection() {
             ))}
         </motion.div>
       </div>
+
+      {/* Quick Apply Modal */}
+      <QuickApplyModal
+        isOpen={!!selectedTier}
+        onClose={() => setSelectedTier(null)}
+        initialService={selectedTier ? getLocalizedString(selectedTier.title, locale) : ''}
+      />
     </section>
   );
 

@@ -47,6 +47,7 @@ export const casesQuery = `*[_type == "case"] | order(order asc) {
   title,
   slug,
   description,
+  longtext,
   "featuredImage": featuredImage.asset->{
     url,
     "dimensions": metadata.dimensions,

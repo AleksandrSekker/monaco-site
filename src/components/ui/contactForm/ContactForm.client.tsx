@@ -6,7 +6,7 @@ import { useState, FormEvent } from 'react';
 import { Locale } from '@/lib/i18n';
 import { contactFormTranslations } from '@/translations/contactForm';
 
-interface ContactFormProps {
+export interface ContactFormProps {
   serviceName?: string;
   serviceTitle?: string;
   currentPath?: string;

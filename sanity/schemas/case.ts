@@ -28,10 +28,10 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'content',
-      title: 'Content',
-      type: 'array',
-      of: [{type: 'block'}, {type: 'image', fields: [{name: 'alt', type: 'string'}]}],
+      name: 'longtext',
+      title: 'Long Text Content',
+      type: 'localeBlockContent',
+      description: 'Detailed content for the case study in multiple languages',
     }),
     defineField({
       name: 'featuredImage',

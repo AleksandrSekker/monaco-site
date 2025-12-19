@@ -97,7 +97,7 @@ export default defineType({
             .replace(/-+$/, '') // Trim - from end of text
             .substring(0, 96), // Limit length
       },
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
   ],
   orderings: [

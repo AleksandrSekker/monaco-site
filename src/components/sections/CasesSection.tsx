@@ -1,47 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCases } from '../../lib/sanity/utils';
-import type { Case, LocaleString, LocaleText } from '../../lib/sanity/types';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { getCases } from '@/lib/sanity/utils';
+import type { Case, LocaleString, LocaleText } from '@/lib/sanity/types';
 import { RoundedImage } from '@/components/ui/RoundedImage';
-import PageHeader from '../ui/PageHeader';
+import { CaseStudyModal } from '@/components/CaseStudyModal';
 import { casesHeaders } from '@/translations/headers';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type LocalizedContent = LocaleString | LocaleText | string;
 
-// Animation variants
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
+const caseItemVariants = {
   hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
     y: 0,
     transition: {
-      type: 'spring' as const,
+      type: 'spring',
       stiffness: 100,
       damping: 15,
-    } as const,
+    },
   },
   hover: {
-    y: -5,
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+    y: -4,
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
     transition: {
       duration: 0.2,
-      ease: 'easeOut' as const,
-    } as const,
+      ease: 'easeOut',
+    },
   },
-};
+} as const;
 
 function getLocalizedString(content: LocalizedContent, locale: string = 'en'): string {
   if (!content) return '';
@@ -53,122 +43,304 @@ function getLocalizedString(content: LocalizedContent, locale: string = 'en'): s
 }
 
 export default function CasesSection() {
-  const [cases, setCases] = useState<Case[]>([]);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [allCases, setAllCases] = useState<Case[]>([]);
+  const [filteredCases, setFilteredCases] = useState<Case[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { locale } = useLanguage();
+  const [error, setError] = useState<Error | null>(null);
+  const { locale = 'en' } = useLanguage();
 
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
+  const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+
+  const ITEMS_PER_PAGE = 6;
+
+  // Fetch cases
+  const fetchCases = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await getCases(locale);
+      setAllCases(data || []);
+    } catch (err) {
+      console.error('Error fetching cases:', err);
+      setError(err instanceof Error ? err : new Error('Failed to load cases'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [locale]);
+
+  // Fetch cases when component mounts
   useEffect(() => {
-    const fetchCases = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getCases(locale);
-        setCases(data || []);
-      } catch (error) {
-        console.error('Error fetching cases:', error);
-        setCases([]);
-      } finally {
-        setIsLoading(false);
+    fetchCases();
+  }, [fetchCases]);
+
+  // Set filtered cases
+  useEffect(() => {
+    const result = [...allCases];
+    // Sort by newest by default
+    result.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    setFilteredCases(result);
+  }, [allCases]);
+
+  // Update URL with current filters
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams();
+    if (currentPage > 1) params.set('page', currentPage.toString());
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+
+    router.replace(newUrl, { scroll: false });
+  }, [currentPage, pathname, router]);
+
+  // Handle case selection from URL
+  useEffect(() => {
+    const caseId = window.location.hash.replace('#', '');
+    if (caseId) {
+      const selected = allCases.find((c) => c._id === caseId);
+      if (selected) setSelectedCase(selected);
+    }
+  }, [allCases]);
+
+  // Get current items for pagination
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+  const currentItems = filteredCases.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCases.length / ITEMS_PER_PAGE);
+
+  // Handle case selection
+  const handleCaseSelect = useCallback((caseItem: Case): void => {
+    setSelectedCase(caseItem);
+    window.history.pushState({}, '', `#${caseItem._id}`);
+  }, []); // No dependencies needed as it doesn't use any external values
+
+  // Handle close modal
+  const handleCloseModal = useCallback((): void => {
+    setSelectedCase(null);
+    if (pathname) {
+      window.history.pushState({}, '', pathname);
+    }
+  }, [pathname]);
+
+  // Navigate between cases in modal
+  const navigateCase = useCallback(
+    (direction: 'prev' | 'next'): void => {
+      if (!selectedCase) return;
+
+      const currentIndex = filteredCases.findIndex((c) => c._id === selectedCase._id);
+      if (direction === 'next' && currentIndex < filteredCases.length - 1) {
+        const newCase = filteredCases[currentIndex + 1];
+        if (newCase) {
+          setSelectedCase(newCase);
+          window.history.pushState({}, '', `#${newCase._id}`);
+        }
+      } else if (direction === 'prev' && currentIndex > 0) {
+        const newCase = filteredCases[currentIndex - 1];
+        if (newCase) {
+          setSelectedCase(newCase);
+          window.history.pushState({}, '', `#${newCase._id}`);
+        }
+      }
+    },
+    [filteredCases, selectedCase], // Add dependencies
+  );
+
+  // Handle keyboard navigation in modal
+  useEffect(() => {
+    if (!selectedCase) return;
+
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        handleCloseModal();
+      } else if (e.key === 'ArrowRight') {
+        const currentIndex = filteredCases.findIndex((c) => c._id === selectedCase._id);
+        if (currentIndex < filteredCases.length - 1) {
+          navigateCase('next');
+        }
+      } else if (e.key === 'ArrowLeft') {
+        const currentIndex = filteredCases.findIndex((c) => c._id === selectedCase._id);
+        if (currentIndex > 0) {
+          navigateCase('prev');
+        }
       }
     };
 
-    fetchCases();
-  }, [locale]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedCase, filteredCases, navigateCase, handleCloseModal]);
 
-  if (isLoading) {
+  // Render case items
+  const renderCaseItem = (caseItem: Case) => {
+    const title = typeof caseItem.title === 'string' ? caseItem.title : getLocalizedString(caseItem.title, locale);
+    const description = caseItem.description
+      ? typeof caseItem.description === 'string'
+        ? caseItem.description
+        : getLocalizedString(caseItem.description, locale)
+      : '';
+
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="container mx-auto px-4 py-12">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto"></div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-            {[1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="h-48 bg-gray-200"></div>
-                <div className="p-6">
-                  <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  if (!cases || cases.length === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="container mx-auto px-4 py-12 text-center"
-      >
-        <h2 className="text-3xl font-bold mb-4 text-gray-900">No Cases Found</h2>
-        <p className="text-gray-600">Check back later for our latest case studies.</p>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full">
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        <PageHeader translations={casesHeaders} className="pb-8" />
-
-        <motion.div
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-          variants={container}
+      <div className="group">
+        <motion.article
+          key={caseItem._id}
           initial="hidden"
           animate="show"
+          whileHover="hover"
+          variants={caseItemVariants}
+          custom={0}
+          className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer h-full flex flex-col"
+          onClick={() => handleCaseSelect(caseItem)}
         >
-          <AnimatePresence>
-            {cases.map((caseItem) => (
-              <motion.article
-                key={caseItem._id}
-                className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-slate-300 transition-all duration-200"
-                variants={item}
-                whileHover="hover"
-                layout
-              >
-                <div className="space-y-3">
-                  {caseItem.featuredImage && (
-                    <motion.div
-                      whileHover={{ scale: 1.03 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                    >
-                      <RoundedImage
-                        src={caseItem.featuredImage.url}
-                        alt={getLocalizedString(caseItem.title) || 'Case study'}
-                        size={48}
-                        placeholder="blur"
-                        blurDataURL={caseItem.featuredImage.lqip}
-                        onError={(e) => {
-                          console.error('Image failed to load:', e);
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                  <h3 className="text-lg font-semibold text-slate-900 group-hover:text-slate-700 transition-colors">
-                    {getLocalizedString(caseItem.title)}
-                  </h3>
-                  {caseItem.description && (
-                    <p className="text-slate-600 mb-4 line-clamp-3 group-hover:text-slate-500 transition-colors">
-                      {getLocalizedString(caseItem.description)}
-                    </p>
-                  )}
-                </div>
-              </motion.article>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+          <div className="relative h-36 overflow-hidden p-4">
+            {caseItem.featuredImage?.url && (
+              <RoundedImage
+                src={caseItem.featuredImage.url}
+                alt={caseItem.featuredImage.alt || title || 'Case study image'}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                placeholder="blur"
+                blurDataURL={caseItem.featuredImage.lqip}
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </div>
+
+          <div className="p-4 flex-1 flex flex-col">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1.5 group-hover:text-red-600 transition-colors line-clamp-2">
+              {title}
+            </h3>
+
+            {description && <p className="text-sm text-gray-600 mb-3 line-clamp-2">{description}</p>}
+          </div>
+        </motion.article>
       </div>
-    </motion.div>
+    );
+  };
+
+  return (
+    <section className="py-16 bg-white">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            {casesHeaders[locale as keyof typeof casesHeaders].title}
+          </h1>
+          <p className="text-lg text-gray-600">{casesHeaders[locale as keyof typeof casesHeaders].description || ''}</p>
+        </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-gray-100 rounded-lg h-80 animate-pulse"></div>
+            ))}
+          </div>
+        )}
+
+        {/* Error State */}
+        {!isLoading && error && (
+          <div className="text-center py-10">
+            <p className="text-red-500">Error loading cases. Please try again.</p>
+            <button onClick={fetchCases} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Cases Grid */}
+        {!isLoading && !error && filteredCases.length > 0 && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {currentItems.map((caseItem, index) => (
+                  <motion.div
+                    key={caseItem._id}
+                    initial="hidden"
+                    animate="show"
+                    exit="hidden"
+                    variants={caseItemVariants}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="h-full"
+                  >
+                    {renderCaseItem(caseItem)}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-12 flex justify-center">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+
+                  <div className="flex space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      // Show pages around current page
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`w-10 h-10 rounded-lg ${
+                            currentPage === pageNum
+                              ? 'bg-red-600 text-white'
+                              : 'border border-gray-200 hover:bg-gray-50'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Case Study Modal */}
+        {selectedCase && (
+          <CaseStudyModal
+            isOpen={!!selectedCase}
+            onClose={handleCloseModal}
+            caseItem={selectedCase}
+            onNext={() => navigateCase('next')}
+            onPrev={() => navigateCase('prev')}
+            hasNext={filteredCases.findIndex((c) => c._id === selectedCase._id) < filteredCases.length - 1}
+            hasPrev={filteredCases.findIndex((c) => c._id === selectedCase._id) > 0}
+            locale={locale}
+          />
+        )}
+      </div>
+    </section>
   );
 }
