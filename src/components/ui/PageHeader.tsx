@@ -40,7 +40,9 @@ const item: Variants = {
 
 export default function PageHeader({ translations, className = '' }: PageHeaderProps) {
   const { locale = 'en' } = useParams() as { locale?: Locale };
-  const t = translations[locale as Locale] || translations.en;
+  // Safely get the translation, defaulting to an empty object if translations is undefined
+  const safeTranslations = translations || {};
+  const t = safeTranslations[locale as Locale] || safeTranslations.en || { title: '', description: '' };
 
   return (
     <motion.div

@@ -121,6 +121,12 @@ export interface Case {
     current: string;
   };
   description: LocaleText | string;
+  longtext?: {
+    _type: 'localeBlockContent';
+    en?: import('@portabletext/types').PortableTextBlock[];
+    fr?: import('@portabletext/types').PortableTextBlock[];
+    ru?: import('@portabletext/types').PortableTextBlock[];
+  };
   content: import('@portabletext/types').PortableTextBlock[];
   featuredImage?: {
     _type: 'image';
@@ -134,10 +140,77 @@ export interface Case {
   };
   publishedAt: string;
   order?: number;
-  // Legacy fields for backward compatibility
   result?: string;
   details?: string;
   duration?: string;
+  categories?: Array<
+    | {
+        _key?: string;
+        _ref?: string;
+        _type?: 'reference';
+        title?: LocaleString | string;
+        slug?: {
+          _type: 'slug';
+          current: string;
+        };
+      }
+    | string
+  >;
+  externalLink?: string;
+  technologies?: string[];
+  client?: string;
+  role?: string;
+  teamSize?: string;
+  challenges?: LocaleText | string;
+  solution?: LocaleText | string;
+  impact?: LocaleText | string;
+  testimonials?: Array<{
+    _key: string;
+    author: string;
+    role: string;
+    content: LocaleText | string;
+    avatar?: {
+      _type: 'image';
+      asset: {
+        _ref: string;
+        _type: 'reference';
+      };
+      url: string;
+      lqip: string;
+      alt?: string;
+    };
+  }>;
+  gallery?: Array<{
+    _key: string;
+    _type: 'image';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+    url: string;
+    lqip: string;
+    alt?: string;
+    caption?: string;
+  }>;
+  relatedCases?: Array<{
+    _key: string;
+    _ref: string;
+    _type: 'reference';
+  }>;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    image?: {
+      _type: 'image';
+      asset: {
+        _ref: string;
+        _type: 'reference';
+      };
+      url: string;
+      alt?: string;
+    };
+  };
 }
 
 export interface BlogPost {

@@ -120,16 +120,21 @@ export async function getPricingTiers(): Promise<PricingTier[]> {
 }
 export async function getCases(locale: string = 'en'): Promise<Case[]> {
   if (!isSanityConfigured || !client) {
+    console.warn('Sanity client is not configured');
     return [];
   }
   try {
+    console.log('Fetching cases with locale:', locale);
     const cases = await client.fetch<Case[]>(casesQuery);
+    console.log('Fetched cases:', cases);
 
     // Process cases to handle localized content
     return cases.map((caseItem) => ({
       ...caseItem,
       title: getLocalizedString(caseItem.title, locale),
       description: getLocalizedString(caseItem.description, locale),
+      // Preserve the longtext field as is, since it's already in the correct format
+      longtext: caseItem.longtext,
     }));
   } catch (error) {
     console.error('Error fetching cases:', error);

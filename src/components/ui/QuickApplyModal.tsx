@@ -1,11 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Locale } from '@/lib/i18n';
 import { quickApplyTranslations } from '@/translations/quickApplyModal';
+import dynamic from 'next/dynamic';
+
+const ContactForm = dynamic(() => import('@/components/ui/contactForm/ContactForm'), {
+  ssr: false,
+  loading: () => <div className="mt-4 h-[300px] w-full animate-pulse rounded-md bg-slate-100" />,
+});
 
 function ModalPortal({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -27,18 +33,45 @@ type QuickApplyModalProps = {
   buttonLabel?: string;
   variant?: 'primary' | 'secondary';
   className?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
+  initialService?: string;
 };
 
-export default function QuickApplyModal({ buttonLabel, variant = 'primary', className = '' }: QuickApplyModalProps) {
+export default function QuickApplyModal({
+  buttonLabel,
+  variant = 'primary',
+  className = '',
+  isOpen: externalIsOpen = false,
+  onClose: externalOnClose,
+  initialService = '',
+}: QuickApplyModalProps) {
   const { locale = 'en' } = useParams<{ locale?: Locale }>();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const isControlled = externalOnClose !== undefined;
+  const open = isControlled ? externalIsOpen : internalOpen;
 
   const t = quickApplyTranslations[locale as Locale] || quickApplyTranslations.en;
   const resolvedButtonLabel = buttonLabel || t.defaultButtonLabel;
 
-  // Handle button click - better to use onClick directly instead of useEffect
-  const handleButtonClick = () => setOpen(true);
+  // Handle button click
+  const handleButtonClick = useCallback(() => {
+    if (!isControlled) {
+      setInternalOpen(true);
+    } else if (externalOnClose) {
+      externalOnClose();
+    }
+  }, [isControlled, externalOnClose]);
+
+  // Handle close with useCallback to prevent unnecessary re-renders
+  const handleClose = useCallback(() => {
+    if (isControlled && externalOnClose) {
+      externalOnClose();
+    } else {
+      setInternalOpen(false);
+    }
+  }, [isControlled, externalOnClose]);
 
   // Handle escape key press
   useEffect(() => {
@@ -46,7 +79,7 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setOpen(false);
+        handleClose();
       }
     };
 
@@ -57,7 +90,7 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [open]);
+  }, [open, handleClose]);
 
   // Handle click outside modal - add this effect for better UX
   useEffect(() => {
@@ -66,13 +99,13 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
     const handleClickOutside = (e: MouseEvent) => {
       const modalContent = document.querySelector('.modal-content');
       if (modalContent && !modalContent.contains(e.target as Node)) {
-        setOpen(false);
+        handleClose();
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
+  }, [open, handleClose]);
 
   const baseButtonClasses =
     'text-xs font-semibold tracking-wide rounded-full transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white';
@@ -96,7 +129,7 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
 
   // Don't render portal during SSR
   if (typeof window === 'undefined') {
-    return button;
+    return isControlled ? null : button;
   }
   const backdropVariants = {
     hidden: { opacity: 0 },
@@ -110,59 +143,30 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
     },
   } as const;
 
-  const modalVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.98,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: 'spring' as const,
-        damping: 20,
-        stiffness: 300,
-        delay: 0.1,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: 20,
-      scale: 0.98,
-      transition: {
-        duration: 0.15,
-      },
-    },
-  } as const;
-
   const modalContent = (
     <AnimatePresence>
       {open && (
         <motion.div
-          key="modal-backdrop"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setOpen(false)}
           initial="hidden"
           animate="visible"
           exit="exit"
           variants={backdropVariants}
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm md:items-center"
         >
           <motion.div
-            key="modal-content"
-            className="modal-content w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.3)]"
-            onClick={(e) => e.stopPropagation()}
-            variants={modalVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="modal-content relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold tracking-wide text-slate-900">{t.modalTitle}</p>
-                <p className="mt-1 text-xs text-slate-600">{t.modalDescription}</p>
+                <h3 className="text-lg font-semibold text-slate-900">{t.modalTitle}</h3>
+                <p className="mt-1 text-sm text-slate-500">{t.modalDescription}</p>
               </div>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
                 className="text-xs text-slate-400 hover:text-slate-900"
                 aria-label="Close"
               >
@@ -170,38 +174,9 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
               </button>
             </div>
 
-            <form className="mt-4 flex flex-col gap-3">
-              <div>
-                <label className="text-[11px] text-slate-600">{t.nameLabel}</label>
-                <input
-                  type="text"
-                  className="mt-1 h-9 w-full rounded-md border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-red-600 focus:outline-none"
-                  placeholder={t.namePlaceholder}
-                />
-              </div>
-              <div>
-                <label className="text-[11px] text-slate-600">{t.contactLabel}</label>
-                <input
-                  type="text"
-                  className="mt-1 h-9 w-full rounded-md border border-slate-300 bg-white px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-red-600 focus:outline-none"
-                  placeholder={t.contactPlaceholder}
-                />
-              </div>
-              <div>
-                <label className="text-[11px] text-slate-600">{t.taskLabel}</label>
-                <textarea
-                  className="mt-1 min-h-[70px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-red-600 focus:outline-none"
-                  placeholder={t.taskPlaceholder}
-                />
-              </div>
-              <button
-                type="submit"
-                className="mt-1 h-9 w-full rounded-full bg-red-600 text-xs font-semibold tracking-wide text-white shadow-lg shadow-red-600/30 hover:bg-red-700"
-              >
-                {t.submitButton}
-              </button>
-              <p className="text-[10px] text-slate-500">{t.privacyText}</p>
-            </form>
+            <div className="mt-4">
+              <ContactForm serviceName={initialService} />
+            </div>
           </motion.div>
         </motion.div>
       )}
@@ -210,7 +185,7 @@ export default function QuickApplyModal({ buttonLabel, variant = 'primary', clas
 
   return (
     <>
-      {button}
+      {!isControlled && button}
       <ModalPortal>{modalContent}</ModalPortal>
     </>
   );
