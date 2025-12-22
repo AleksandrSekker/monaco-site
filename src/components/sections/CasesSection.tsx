@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { getCases } from '@/lib/sanity/utils';
 import type { Case, LocaleString, LocaleText } from '@/lib/sanity/types';
 import { RoundedImage } from '@/components/ui/RoundedImage';
@@ -45,14 +45,13 @@ function getLocalizedString(content: LocalizedContent, locale: string = 'en'): s
 export default function CasesSection() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [allCases, setAllCases] = useState<Case[]>([]);
   const [filteredCases, setFilteredCases] = useState<Case[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { locale = 'en' } = useLanguage();
 
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
 
   const ITEMS_PER_PAGE = 6;
@@ -85,16 +84,11 @@ export default function CasesSection() {
     setFilteredCases(result);
   }, [allCases]);
 
-  // Update URL with current filters
+  // Update URL with current page
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || currentPage === 1) return;
 
-    const params = new URLSearchParams();
-    if (currentPage > 1) params.set('page', currentPage.toString());
-
-    const queryString = params.toString();
-    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
-
+    const newUrl = `${pathname}?page=${currentPage}`;
     router.replace(newUrl, { scroll: false });
   }, [currentPage, pathname, router]);
 
