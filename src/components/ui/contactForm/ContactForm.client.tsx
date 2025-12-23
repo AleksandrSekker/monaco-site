@@ -1,8 +1,7 @@
-// src/components/ui/contactForm/ContactForm.client.tsx
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useRef } from 'react';
 import { Locale } from '@/lib/i18n';
 import { contactFormTranslations } from '@/translations/contactForm';
 
@@ -17,6 +16,7 @@ interface SubmitStatus {
   success: boolean;
   message: string;
 }
+
 export default function ContactFormClient({
   serviceName = '',
   serviceTitle = '',
@@ -24,6 +24,7 @@ export default function ContactFormClient({
   locale = 'en',
 }: ContactFormProps) {
   const params = useParams<{ locale?: Locale }>();
+  const formRef = useRef<HTMLFormElement>(null);
   const currentLocale = locale || params.locale || 'en';
   const t =
     contactFormTranslations[currentLocale as keyof typeof contactFormTranslations] || contactFormTranslations.en;
@@ -32,12 +33,14 @@ export default function ContactFormClient({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    if (!formRef.current) return;
+
+    const formData = new FormData(formRef.current);
     const data = {
       name: formData.get('name') as string,
       email: formData.get('contact') as string,
       message: formData.get('message') as string,
-      service: serviceName,
+      service: serviceTitle || serviceName,
       currentPath,
     };
 
@@ -54,10 +57,12 @@ export default function ContactFormClient({
       });
 
       if (response.ok) {
+        await response.json();
         setSubmitStatus({ success: true, message: t.successMessage });
-        e.currentTarget.reset();
+        formRef.current?.reset();
       } else {
-        throw new Error('Failed to send message');
+        const error = await response.text();
+        throw new Error(error || 'Failed to send message');
       }
     } catch (error) {
       setSubmitStatus({
@@ -70,7 +75,7 @@ export default function ContactFormClient({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+    <form ref={formRef} onSubmit={handleSubmit} className="mt-4 space-y-3">
       <div>
         <label className="text-[11px] text-slate-600">{t.nameLabel} *</label>
         <input
