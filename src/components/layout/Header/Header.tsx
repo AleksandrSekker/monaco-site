@@ -84,7 +84,7 @@ export default function Header() {
           {/* Rest of your header content */}
           <div className="flex items-center gap-3">
             <a
-              href="https://t.me/"
+              href="https://t.me/Monacofinancialsolution"
               target="_blank"
               rel="noreferrer"
               className="hidden rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:border-slate-400 md:inline-flex"
@@ -92,7 +92,7 @@ export default function Header() {
               {t.nav.telegram}
             </a>
             <a
-              href="https://wa.me/"
+              href="https://wa.me/377640626753"
               target="_blank"
               rel="noreferrer"
               className="hidden rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:border-slate-400 md:inline-flex"
