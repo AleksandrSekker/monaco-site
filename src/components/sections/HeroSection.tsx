@@ -139,7 +139,7 @@ export default function HeroSection() {
             animate={isMounted ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <div className="absolute inset-0 bg-black/40 z-10" />
+            <div className="absolute inset-0 z-10" />
             <Image
               src={heroData.mobileImage.asset.url}
               alt={heroData.mobileImage.alt || 'Monaco Financial Solutions'}
@@ -157,7 +157,7 @@ export default function HeroSection() {
             animate={isMounted ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <div className="absolute inset-0 bg-black/40 z-10" />
+            <div className="absolute inset-0  z-10" />
             <Image
               src={heroData.desktopImage.asset.url}
               alt={heroData.desktopImage.alt || 'Monaco Financial Solutions'}

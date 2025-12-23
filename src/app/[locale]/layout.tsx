@@ -47,7 +47,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
                 {/* Floating Action Buttons with animations */}
                 <div className="fixed bottom-4 left-4 z-50 space-y-4">
                   <a
-                    href="https://t.me/"
+                    href="https://t.me/Monacofinancialsolution"
                     target="_blank"
                     rel="noreferrer"
                     className="group flex h-12 w-12 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/40 transition-all duration-300 hover:scale-110 hover:bg-sky-600 hover:shadow-xl hover:shadow-sky-500/50"
@@ -63,7 +63,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
                     </svg>
                   </a>
                   <a
-                    href="https://wa.me/"
+                    href="https://wa.me/377640626753"
                     target="_blank"
                     rel="noreferrer"
                     className="group flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/40 transition-all duration-300 hover:scale-110 hover:bg-green-600 hover:shadow-xl hover:shadow-green-500/50"

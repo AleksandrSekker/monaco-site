@@ -18,6 +18,10 @@ type ContactTranslations = {
       label: string;
       number: string;
     };
+    instagram: {
+      label: string;
+      button: string;
+    };
     email: {
       label: string;
       button: string;
@@ -46,7 +50,11 @@ export const contactTranslations: Record<Locale, ContactTranslations> = {
       },
       phone: {
         label: 'Phone',
-        number: '+377 XXX XXX XXX',
+        number: '+377-640-626-753',
+      },
+      instagram: {
+        label: 'Instagram',
+        button: 'Write on Instagram',
       },
       email: {
         label: 'Email',
@@ -74,7 +82,11 @@ export const contactTranslations: Record<Locale, ContactTranslations> = {
       },
       phone: {
         label: 'Téléphone',
-        number: '+377 XXX XXX XXX',
+        number: '+377-640-626-753',
+      },
+      instagram: {
+        label: 'Instagram',
+        button: 'Écrire sur Instagram',
       },
       email: {
         label: 'E-mail',
@@ -103,7 +115,11 @@ export const contactTranslations: Record<Locale, ContactTranslations> = {
       },
       phone: {
         label: 'Телефон',
-        number: '+377 XXX XXX XXX',
+        number: '+377-640-626-753',
+      },
+      instagram: {
+        label: 'Инстаграм',
+        button: 'Написать в Инстаграм',
       },
       email: {
         label: 'Электронная почта',

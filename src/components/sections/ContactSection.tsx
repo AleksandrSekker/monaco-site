@@ -25,7 +25,7 @@ export default function ContactSection() {
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-slate-500">{t.contactMethods.telegram.label}</span>
                 <a
-                  href="https://t.me/"
+                  href="https://t.me/Monacofinancialsolution"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full border border-slate-300 px-3 py-1 text-xs hover:border-slate-400"
@@ -36,7 +36,7 @@ export default function ContactSection() {
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-slate-500">{t.contactMethods.whatsapp.label}</span>
                 <a
-                  href="https://wa.me/"
+                  href="https://wa.me/377640626753"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full border border-slate-300 px-3 py-1 text-xs hover:border-slate-400"
@@ -45,9 +45,20 @@ export default function ContactSection() {
                 </a>
               </div>
               <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold text-slate-500">{t.contactMethods.instagram.label}</span>
+                <a
+                  href="https://www.instagram.com/monacofinancialsolution?igsh=aW9lNWdsZjU1bm92&utm_source=qr"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-slate-300 px-3 py-1 text-xs hover:border-slate-400"
+                >
+                  {t.contactMethods.instagram.button}
+                </a>
+              </div>
+              <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-slate-500">{t.contactMethods.phone.label}</span>
                 <span className="text-sm text-slate-900">{t.contactMethods.phone.number}</span>
-              </div>{' '}
+              </div>
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-slate-500">{t.contactMethods.email.label}</span>
                 <a href="mailto:monacofinancialsolution@gmail.com">
