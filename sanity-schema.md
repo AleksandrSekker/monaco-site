@@ -102,9 +102,9 @@
 ```javascript
 {
   _type: 'contact',
-  telegram: 'https://t.me/your_username',
-  whatsapp: 'https://wa.me/your_number',
-  phone: '+377 XXX XXX XXX',
+  telegram: 'https://t.me/Monacofinancialsolution',
+  whatsapp: 'https://wa.me/377640626753',
+  phone: '+377-640-626-753',
   email: 'info@monacofinancialsolution.com'
 }
 ```
@@ -114,12 +114,8 @@
 Для создания этих схем в Sanity Studio, используйте Sanity Schema Language или создайте их через веб-интерфейс Studio.
 
 Альтернативно, можно установить Sanity Studio локально:
+
 ```bash
 npm install -g @sanity/cli
 sanity init
 ```
-
-
-
-
-

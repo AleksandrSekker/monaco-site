@@ -234,9 +234,9 @@ async function createContent() {
     await client.createOrReplace({
       _type: 'contact',
       _id: 'contact-main',
-      telegram: 'https://t.me/',
-      whatsapp: 'https://wa.me/',
-      phone: '+377 XXX XXX XXX',
+      telegram: 'https://t.me/Monacofinancialsolution',
+      whatsapp: 'https://wa.me/377640626753',
+      phone: '+377-640-626-753',
       email: 'info@monacofinancialsolution.com',
     });
     console.log('✅ Contact создан\n');
@@ -263,4 +263,3 @@ async function createContent() {
 }
 
 createContent();
-
