@@ -2,17 +2,27 @@
 
 import { usePathname, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { GA_MEASUREMENT_ID, pageview } from '@/lib/gtag';
 
-export default function GoogleAnalytics() {
+function GoogleAnalyticsWithSuspense() {
+  return (
+    <Suspense fallback={null}>
+      <GoogleAnalytics />
+    </Suspense>
+  );
+}
+
+function GoogleAnalytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!GA_MEASUREMENT_ID) return;
 
-    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
+    const queryString = searchParams?.toString() ? `?${searchParams.toString()}` : '';
+    const url = `${pathname}${queryString}`;
+
     pageview(url);
   }, [pathname, searchParams]);
 
@@ -24,7 +34,7 @@ export default function GoogleAnalytics() {
     <>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
       <Script
-        id="gtag-init"
+        id="google-analytics"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
@@ -40,3 +50,5 @@ export default function GoogleAnalytics() {
     </>
   );
 }
+
+export default GoogleAnalyticsWithSuspense;
