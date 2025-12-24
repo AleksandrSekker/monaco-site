@@ -1,5 +1,5 @@
 // src/app/[locale]/layout.tsx
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { locales } from '@/lib/i18n';
 import type { Locale } from '@/lib/i18n';
@@ -8,32 +8,132 @@ import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import { PageTransition, FadeIn } from '@/components/animations';
+import { JsonLd } from '@/components/seo/JsonLd';
+import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
 import '../globals.css';
+
 interface LayoutProps {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }
-
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
-
 export const metadata: Metadata = {
-  title: 'Monaco Financial Solution',
-  description: 'Your financial partner in Monaco',
+  title: {
+    default: 'Monaco Financial Solution | Your Trusted Financial Partner',
+    template: '%s | Monaco Financial Solution',
+  },
+  description:
+    'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services for private and corporate clients.',
+  keywords: [
+    'Monaco',
+    'financial services',
+    'wealth management',
+    'investment',
+    'tax planning',
+    'private banking',
+    'asset management',
+    'financial planning',
+    'Monaco finance',
+    'wealth preservation',
+  ],
+  authors: [{ name: 'Monaco Financial Solution' }],
+  metadataBase: new URL('https://monacofinancialsolution.com'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      en: '/en',
+      fr: '/fr',
+      ru: '/ru',
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_GB',
+    url: 'https://monacofinancialsolution.com',
+    siteName: 'Monaco Financial Solution',
+    title: 'Monaco Financial Solution | Your Trusted Financial Partner',
+    description:
+      'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services.',
+    images: [
+      {
+        url: '/images/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Monaco Financial Solution',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Monaco Financial Solution | Your Trusted Financial Partner',
+    description:
+      'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services.',
+    images: ['/images/og-image.jpg'],
+    site: '@monacofinancial',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png' }],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/safari-pinned-tab.svg',
+        color: '#5bbad5',
+      },
+    ],
+  },
+  manifest: '/site.webmanifest',
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || '',
+  },
+  other: {
+    'msapplication-TileColor': '#2b5797',
+    'msapplication-config': '/browserconfig.xml',
+    'theme-color': '#ffffff',
+  },
 };
-
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
 export default async function LocaleLayout({ children, params }: LayoutProps) {
-  // Validate that the incoming locale is valid
+  // Validate the locale
   const { locale } = await Promise.resolve(params);
 
-  // Type assertion after validation
+  // Validate the locale
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
-
   return (
     <html lang={locale} className="light scroll-smooth">
+      <head>
+        <link rel="canonical" href={`https://monacofinancialsolution.com/${locale}`} />
+        <link rel="alternate" hrefLang="x-default" href="https://monacofinancialsolution.com/en" />
+        <link rel="alternate" hrefLang="en" href="https://monacofinancialsolution.com/en" />
+        <link rel="alternate" hrefLang="fr" href="https://monacofinancialsolution.com/fr" />
+        <link rel="alternate" hrefLang="ru" href="https://monacofinancialsolution.com/ru" />
+        <JsonLd type="Organization" />
+        <GoogleAnalytics />
+      </head>
       <body className="antialiased transition-colors duration-300">
         <LanguageProvider>
           <PageTransition>
@@ -44,7 +144,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
                 <main className="flex-1 bg-white transition-all duration-300 ease-in-out">{children}</main>
                 <Footer />
 
-                {/* Floating Action Buttons with animations */}
+                {/* Rest of your JSX remains the same */}
                 <div className="fixed bottom-4 left-4 z-50 space-y-4">
                   <a
                     href="https://t.me/Monacofinancialsolution"

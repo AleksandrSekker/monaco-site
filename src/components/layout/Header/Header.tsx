@@ -114,7 +114,7 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-6 text-xs font-medium tracking-wide text-slate-600 md:flex">
+        <nav className="hidden items-center gap-6 text-xs font-medium tracking-wide text-slate-600 lg:flex">
           {navLinks.map((link) => (
             <Link key={link.href} href={`/${locale}/${link.href}`} className="transition-colors hover:text-slate-900">
               {link.label}
@@ -159,7 +159,7 @@ export default function Header() {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
-          <div className="fixed inset-0 z-[9999] h-[100dvh] w-full overflow-hidden md:hidden">
+          <div className="fixed inset-0 z-[9999] h-[100dvh] w-full overflow-hidden lg:hidden">
             {/* Backdrop with increased z-index */}
             <motion.div
               initial={{ opacity: 0 }}
