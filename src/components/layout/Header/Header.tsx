@@ -159,26 +159,31 @@ export default function Header() {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
-          <div className="fixed inset-0 z-[9999] overflow-hidden md:hidden">
-            {/* Backdrop */}
+          <div className="fixed inset-0 z-[9999] h-[100dvh] w-full overflow-hidden md:hidden">
+            {/* Backdrop with increased z-index */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0"
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black/30 z-[9999]"
               onClick={() => setIsMenuOpen(false)}
             />
 
-            {/* Menu Panel */}
+            {/* Menu Panel with proper iOS viewport handling */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
-              className="fixed left-0 top-0 h-full w-full bg-white shadow-xl z-[10000] flex flex-col"
+              transition={{
+                type: 'tween',
+                duration: 0.3,
+                ease: [0.25, 1, 0.5, 1],
+              }}
+              className="fixed right-0 top-0 h-[100dvh] w-full max-w-sm bg-white shadow-xl z-[10000] flex flex-col"
+              style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              <div className="flex-1 bg-white p-6 flex flex-col w-full">
+              <div className="flex-1 bg-white p-6 flex flex-col w-full overflow-y-auto">
                 <div className="mb-8 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative h-10 w-9">

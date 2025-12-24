@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for 100vh on iOS */
+  .h-ios-screen {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Prevent iOS from changing colors on tap */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fix for iOS scrolling */
+html {
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  position: relative;
+}
+
 @layer utilities {
   /* Animation keyframes */
   @keyframes fadeInUp {
