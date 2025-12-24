@@ -14,7 +14,7 @@ import '../globals.css';
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -119,7 +119,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   // Validate the locale
   const { locale } = await Promise.resolve(params);
 
-  // Validate the locale
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
