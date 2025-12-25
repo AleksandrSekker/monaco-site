@@ -4,13 +4,13 @@ import { notFound } from 'next/navigation';
 import { locales } from '@/lib/i18n';
 import type { Locale } from '@/lib/i18n';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { PageTransition, FadeIn } from '@/components/animations';
+import { cormorant, gilda, europa } from '../fonts';
 import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import { PageTransition, FadeIn } from '@/components/animations';
 import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
-import { cormorant, gilda, europa } from '../fonts';
-
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 // Preload critical CSS and fonts
 import '../globals.css';
 
@@ -31,11 +31,12 @@ const preloadFonts: Array<{
 ];
 
 export const viewport: Viewport = {
+  themeColor: '#1a365d',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
-  themeColor: '#ffffff',
-  colorScheme: 'light',
+  maximumScale: 1,
+  viewportFit: 'cover',
+  userScalable: false,
 };
 
 interface LayoutProps {
@@ -47,105 +48,107 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export const metadata: Metadata = {
-  title: {
-    default: 'Monaco Financial Solution | Your Trusted Financial Partner',
-    template: '%s | Monaco Financial Solution',
-  },
-  description:
-    'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services for private and corporate clients.',
-  metadataBase: new URL('https://monacofinancialsolution.com'),
-  applicationName: 'Monaco Financial Solution',
-  referrer: 'origin-when-cross-origin',
-  generator: 'Next.js',
-  publisher: 'Monaco Financial Solution',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  keywords: [
-    'Monaco',
-    'financial services',
-    'wealth management',
-    'investment',
-    'tax planning',
-    'private banking',
-    'asset management',
-    'financial planning',
-    'Monaco finance',
-    'wealth preservation',
-  ],
-  authors: [{ name: 'Monaco Financial Solution' }],
-  alternates: {
-    canonical: '/',
-    languages: {
-      en: '/en',
-      fr: '/fr',
-      ru: '/ru',
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const { locale } = await Promise.resolve(params);
+  const baseUrl = 'https://monacofinancialsolution.com';
+  const canonicalUrl = locale === 'en' ? baseUrl : `${baseUrl}/${locale}`;
+
+  return {
+    title: {
+      default: 'Monaco Financial Solution | Your Trusted Financial Partner',
+      template: '%s | Monaco Financial Solution',
     },
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_GB',
-    url: 'https://monacofinancialsolution.com',
-    siteName: 'Monaco Financial Solution',
-    title: 'Monaco Financial Solution | Your Trusted Financial Partner',
     description:
-      'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services.',
-    images: [
-      {
-        url: '/images/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Monaco Financial Solution',
-      },
+      'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services for private and corporate clients.',
+    metadataBase: new URL('https://monacofinancialsolution.com'),
+    applicationName: 'Monaco Financial Solution',
+    referrer: 'origin-when-cross-origin',
+    generator: 'Next.js',
+    publisher: 'Monaco Financial Solution',
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    keywords: [
+      'Monaco',
+      'financial services',
+      'wealth management',
+      'investment',
+      'tax planning',
+      'private banking',
+      'asset management',
+      'financial planning',
+      'Monaco finance',
+      'wealth preservation',
     ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Monaco Financial Solution | Your Trusted Financial Partner',
-    description:
-      'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services.',
-    images: ['/images/og-image.jpg'],
-    site: '@monacofinancial',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    authors: [{ name: 'Monaco Financial Solution' }],
+    alternates: {
+      canonical: 'https://monacofinancialsolution.com',
+      languages: {
+        en: 'https://monacofinancialsolution.com/en',
+        fr: 'https://monacofinancialsolution.com/fr',
+        ru: 'https://monacofinancialsolution.com/ru',
+        'x-default': 'https://monacofinancialsolution.com/en',
+      },
+    },
+    openGraph: {
+      type: 'website',
+      locale: locale === 'en' ? 'en_GB' : `${locale}_${locale.toUpperCase()}`,
+      url: canonicalUrl,
+      siteName: 'Monaco Financial Solution',
+      title: 'Monaco Financial Solution | Your Trusted Financial Partner',
+      description:
+        'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services.',
+      images: [
+        {
+          url: '/images/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Monaco Financial Solution',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Monaco Financial Solution | Your Trusted Financial Partner',
+      description:
+        'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services.',
+      images: ['/images/og-image.jpg'],
+      site: '@monacofinancial',
+    },
+    robots: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [{ url: '/apple-touch-icon.png' }],
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/safari-pinned-tab.svg',
-        color: '#5bbad5',
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
       },
+    },
+    icons: [
+      { rel: 'icon', url: '/favicon.ico' },
+      { rel: 'icon', type: 'image/png', sizes: '16x16', url: '/favicon-16x16.png' },
+      { rel: 'icon', type: 'image/png', sizes: '32x32', url: '/favicon-32x32.png' },
+      { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
+      { rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#5bbad5' },
     ],
-  },
-  manifest: '/site.webmanifest',
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || '',
-  },
-  other: {
-    'msapplication-TileColor': '#2b5797',
-    'msapplication-config': '/browserconfig.xml',
-    'theme-color': '#ffffff',
-  },
-};
+    other: {
+      'apple-mobile-web-app-capable': 'yes',
+      'mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-status-bar-style': 'default',
+      'msapplication-TileColor': '#2b5797',
+      'msapplication-config': '/browserconfig.xml',
+      'theme-color': '#ffffff',
+    },
+    manifest: '/site.webmanifest',
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || '',
+    },
+  };
+}
 
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await Promise.resolve(params);
@@ -154,6 +157,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     notFound();
   }
 
+  // Get the canonical URL based on locale
+  const canonicalUrl =
+    locale === 'en' ? 'https://monacofinancialsolution.com' : `https://monacofinancialsolution.com/${locale}`;
+
   return (
     <html
       lang={locale}
@@ -161,6 +168,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       suppressHydrationWarning
     >
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1a365d" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* Preload critical resources */}
+        <link rel="preload" href="/_next/static/media/hero-image.avif" as="image" fetchPriority="high" />
+
         {/* Preload critical fonts */}
         {preloadFonts.map((font, index) => (
           <link
@@ -170,27 +185,51 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
             as={font.as}
             type={font.type}
             crossOrigin={font.crossOrigin}
+            fetchPriority={index === 0 ? 'high' : 'auto'}
           />
         ))}
 
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
 
         {/* Canonical and alternate URLs */}
-        <link rel="canonical" href={`https://monacofinancialsolution.com/${locale}`} />
+        <link rel="canonical" href={canonicalUrl} />
         <link rel="alternate" hrefLang="x-default" href="https://monacofinancialsolution.com/en" />
         <link rel="alternate" hrefLang="en" href="https://monacofinancialsolution.com/en" />
         <link rel="alternate" hrefLang="fr" href="https://monacofinancialsolution.com/fr" />
         <link rel="alternate" hrefLang="ru" href="https://monacofinancialsolution.com/ru" />
 
-        <GoogleAnalytics />
+        {/* Preload critical CSS */}
+        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+
+        {/* Google Analytics - Load after critical content */}
+
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icons/icon-32x32.png" type="image/png" />
+        <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        {/* PWA */}
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#1a365d" />
+        {/* iOS */}
+        <meta name="apple-mobile-web-app-title" content="Monaco FS" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        {/* Windows */}
+        <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+        <meta name="msapplication-TileColor" content="#1a365d" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className="antialiased transition-colors duration-300">
         <LanguageProvider>
           <PageTransition>
             <FadeIn>
               <ScrollToTop />
+              <GoogleAnalytics />
+              <ServiceWorkerRegistration />
               <div className="flex min-h-screen flex-col" lang={locale}>
                 <Header />
                 <main className="flex-1 bg-white transition-all duration-300 ease-in-out" id="main-content">
