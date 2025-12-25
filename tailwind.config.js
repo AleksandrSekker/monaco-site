@@ -14,9 +14,25 @@ const config = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
       },
+      fontFamily: {
+        sans: ['var(--font-europa)', 'sans-serif'],
+        serif: ['var(--font-cormorant)', 'serif'],
+        display: ['var(--font-gilda)', 'serif'],
+      },
     },
   },
-  plugins: [typography, forms],
+  plugins: [
+    typography,
+    forms,
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.text-balance': {
+          textWrap: 'balance',
+        },
+      };
+      addUtilities(newUtilities, ['responsive', 'hover']);
+    },
+  ],
 };
 
 export default config;

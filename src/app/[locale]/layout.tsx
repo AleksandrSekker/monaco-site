@@ -8,17 +8,45 @@ import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import { PageTransition, FadeIn } from '@/components/animations';
-import { JsonLd } from '@/components/seo/JsonLd';
 import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
+import { cormorant, gilda, europa } from '../fonts';
+
+// Preload critical CSS and fonts
 import '../globals.css';
+
+// Add preload for critical fonts
+const preloadFonts: Array<{
+  href: string;
+  as: string;
+  type: string;
+  crossOrigin: 'anonymous' | 'use-credentials' | '' | undefined;
+}> = [
+  {
+    href: '/_next/static/media/europa-regular.woff2',
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous' as const,
+  },
+  { href: '/_next/static/media/europa-bold.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' as const },
+];
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#ffffff',
+  colorScheme: 'light',
+};
 
 interface LayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }
+
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
+
 export const metadata: Metadata = {
   title: {
     default: 'Monaco Financial Solution | Your Trusted Financial Partner',
@@ -26,6 +54,16 @@ export const metadata: Metadata = {
   },
   description:
     'Expert financial solutions in Monaco. Specializing in investment management, tax planning, and wealth management services for private and corporate clients.',
+  metadataBase: new URL('https://monacofinancialsolution.com'),
+  applicationName: 'Monaco Financial Solution',
+  referrer: 'origin-when-cross-origin',
+  generator: 'Next.js',
+  publisher: 'Monaco Financial Solution',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   keywords: [
     'Monaco',
     'financial services',
@@ -39,7 +77,6 @@ export const metadata: Metadata = {
     'wealth preservation',
   ],
   authors: [{ name: 'Monaco Financial Solution' }],
-  metadataBase: new URL('https://monacofinancialsolution.com'),
   alternates: {
     canonical: '/',
     languages: {
@@ -109,28 +146,44 @@ export const metadata: Metadata = {
     'theme-color': '#ffffff',
   },
 };
-export const viewport: Viewport = {
-  themeColor: '#ffffff',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 5,
-};
+
 export default async function LocaleLayout({ children, params }: LayoutProps) {
-  // Validate the locale
   const { locale } = await Promise.resolve(params);
 
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
+
   return (
-    <html lang={locale} className="light scroll-smooth">
+    <html
+      lang={locale}
+      className={`${cormorant.variable} ${gilda.variable} ${europa.variable} light scroll-smooth`}
+      suppressHydrationWarning
+    >
       <head>
+        {/* Preload critical fonts */}
+        {preloadFonts.map((font, index) => (
+          <link
+            key={index}
+            rel="preload"
+            href={font.href}
+            as={font.as}
+            type={font.type}
+            crossOrigin={font.crossOrigin}
+          />
+        ))}
+
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
+
+        {/* Canonical and alternate URLs */}
         <link rel="canonical" href={`https://monacofinancialsolution.com/${locale}`} />
         <link rel="alternate" hrefLang="x-default" href="https://monacofinancialsolution.com/en" />
         <link rel="alternate" hrefLang="en" href="https://monacofinancialsolution.com/en" />
         <link rel="alternate" hrefLang="fr" href="https://monacofinancialsolution.com/fr" />
         <link rel="alternate" hrefLang="ru" href="https://monacofinancialsolution.com/ru" />
-        <JsonLd type="Organization" />
+
         <GoogleAnalytics />
       </head>
       <body className="antialiased transition-colors duration-300">
@@ -140,10 +193,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
               <ScrollToTop />
               <div className="flex min-h-screen flex-col" lang={locale}>
                 <Header />
-                <main className="flex-1 bg-white transition-all duration-300 ease-in-out">{children}</main>
+                <main className="flex-1 bg-white transition-all duration-300 ease-in-out" id="main-content">
+                  {children}
+                </main>
                 <Footer />
 
-                {/* Rest of your JSX remains the same */}
+                {/* Social media buttons */}
                 <div className="fixed bottom-4 left-4 z-50 space-y-4">
                   <a
                     href="https://t.me/Monacofinancialsolution"

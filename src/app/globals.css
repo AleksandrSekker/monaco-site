@@ -2,9 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --font-gilda: var(--font-gilda);
+    --font-cormorant: var(--font-cormorant);
+    --font-europa: var(--font-europa);
+  }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-white text-gray-900 antialiased;
+  }
+
+  [data-js-focus-visible] :focus:not([data-focus-visible-added]) {
+    outline: none;
+  }
+}
+
 /* iOS-specific fixes */
 @supports (-webkit-touch-callout: none) {
-  /* Fix for 100vh on iOS */
   .h-ios-screen {
     height: -webkit-fill-available;
   }
@@ -26,6 +46,32 @@ body {
   position: relative;
 }
 
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-gilda;
+  }
+
+  body {
+    @apply font-europa;
+  }
+
+  .font-gilda {
+    font-family: var(--font-gilda);
+  }
+
+  .font-cormorant {
+    font-family: var(--font-cormorant);
+  }
+
+  .font-europa {
+    font-family: var(--font-europa);
+  }
+}
 @layer utilities {
   /* Animation keyframes */
   @keyframes fadeInUp {
