@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import path from 'path';
+
 const securityHeaders = [
   {
     key: 'X-DNS-Prefetch-Control',
@@ -21,13 +22,43 @@ const securityHeaders = [
     key: 'X-Content-Type-Options',
     value: 'nosniff',
   },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: `
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.sanity.io;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      img-src 'self' data: https: blob: https://cdn.sanity.io https://images.unsplash.com;
+      font-src 'self' https://fonts.gstatic.com data:;
+      connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://vitals.vercel-insights.com https://cdn.sanity.io https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io;
+      media-src 'self' data: https: blob: https://cdn.sanity.io;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      block-all-mixed-content;
+      upgrade-insecure-requests;
+    `
+      .replace(/\s+/g, ' ')
+      .trim(),
+  },
 ];
 
 const nextConfig: NextConfig = {
+  // Core optimizations
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
   generateEtags: true,
+  // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -105,5 +136,4 @@ const nextConfig: NextConfig = {
     ];
   },
 };
-
 export default nextConfig;
