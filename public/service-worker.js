@@ -1,37 +1,49 @@
-const CACHE_NAME = 'monaco-financial-v1';
+const CACHE_NAME = 'monaco-financial-v2';
 const OFFLINE_URL = '/offline';
-const ASSETS_TO_CACHE = [
+const CACHEABLE_ASSETS = [
   '/',
-  '/_next/static/css/app/layout.css',
-  '/_next/static/media/hero-image.avif',
-  '/_next/static/media/europa-regular.woff2',
-  '/_next/static/media/europa-bold.woff2',
-  '/images/og-image.jpg',
-  '/favicon.ico',
   '/manifest.json',
   '/site.webmanifest',
   '/browserconfig.xml',
-  // Add PWA icons
+  // Core fonts
+  '/_next/static/media/europa-regular.woff2',
+  '/_next/static/media/europa-bold.woff2',
+  // Critical images
+  '/images/og-image.jpg',
+  '/favicon.ico',
+  // PWA assets
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   '/icons/apple-touch-icon.png',
-  // Add other critical assets
 ];
 
-// Install event - cache all static assets
+// Cache with network-first strategy
+const CACHE_FIRST_URLS = [
+  // Add paths that should be cached first (e.g., static assets)
+  '/_next/static',
+  '/images',
+  '/icons',
+];
+
+// Network-first URLs (dynamic content)
+const NETWORK_FIRST_URLS = [
+  // Add API endpoints or dynamic content
+  '/api',
+];
+
+// Install event - cache core assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => {
-        console.log('[Service Worker] Caching all: app shell and content');
-        return cache.addAll(ASSETS_TO_CACHE);
+        console.log('[Service Worker] Caching core assets');
+        return cache.addAll(CACHEABLE_ASSETS);
       })
       .catch((error) => {
         console.error('[Service Worker] Cache addAll error:', error);
       }),
   );
-  // Force the waiting service worker to become the active service worker
   self.skipWaiting();
 });
 
@@ -53,15 +65,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - network first, then cache
+// Enhanced fetch handler with different strategies
 self.addEventListener('fetch', (event) => {
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
-
   const requestUrl = new URL(event.request.url);
 
-  // Skip cross-origin requests and chrome-extension://
-  if (!requestUrl.origin.startsWith(self.location.origin) || requestUrl.protocol === 'chrome-extension:') {
+  // Skip non-GET and cross-origin requests
+  if (
+    event.request.method !== 'GET' ||
+    !requestUrl.origin.startsWith(self.location.origin) ||
+    requestUrl.protocol === 'chrome-extension:'
+  ) {
     return;
   }
 
@@ -70,11 +83,14 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       (async () => {
         try {
-          // Try network first
+          // Try network first for navigation
           const networkResponse = await fetch(event.request);
+          // Cache the page for offline use
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(event.request, networkResponse.clone());
           return networkResponse;
         } catch (error) {
-          // If offline or network fails, return cached version or offline page
+          // Return cached version or offline page
           const cachedResponse = await caches.match(event.request);
           return cachedResponse || caches.match(OFFLINE_URL);
         }
@@ -83,15 +99,63 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For other requests, try cache first, then network
-  event.respondWith(
-    (async () => {
-      try {
-        // Try to get from cache first
+  // Check if URL matches cache-first pattern
+  const shouldCacheFirst = CACHE_FIRST_URLS.some((url) => requestUrl.pathname.startsWith(url));
+
+  // Check if URL matches network-first pattern
+  const shouldNetworkFirst = NETWORK_FIRST_URLS.some((url) => requestUrl.pathname.startsWith(url));
+
+  // Handle cache-first strategy
+  if (shouldCacheFirst) {
+    event.respondWith(
+      (async () => {
         const cachedResponse = await caches.match(event.request);
         if (cachedResponse) return cachedResponse;
 
-        // If not in cache, try network
+        const networkResponse = await fetch(event.request);
+        if (networkResponse.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(event.request, networkResponse.clone());
+        }
+        return networkResponse;
+      })(),
+    );
+    return;
+  }
+
+  // Handle network-first strategy (default for API calls)
+  if (shouldNetworkFirst) {
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(event.request);
+          if (networkResponse.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        } catch (error) {
+          const cachedResponse = await caches.match(event.request);
+          return (
+            cachedResponse ||
+            new Response(JSON.stringify({ error: 'Network error' }), {
+              status: 408,
+              headers: { 'Content-Type': 'application/json' },
+            })
+          );
+        }
+      })(),
+    );
+    return;
+  }
+
+  // Default: Cache falling back to network
+  event.respondWith(
+    (async () => {
+      try {
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
+
         const networkResponse = await fetch(event.request);
 
         // If the response is valid, cache it
