@@ -33,20 +33,42 @@ const securityHeaders = [
   {
     key: 'Content-Security-Policy',
     value: `
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.sanity.io;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      img-src 'self' data: https: blob: https://cdn.sanity.io https://images.unsplash.com;
-      font-src 'self' https://fonts.gstatic.com data:;
-      connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://vitals.vercel-insights.com https://cdn.sanity.io https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io;
-      media-src 'self' data: https: blob: https://cdn.sanity.io;
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'none';
-      block-all-mixed-content;
-      upgrade-insecure-requests;
-    `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' 
+      https://www.googletagmanager.com 
+      https://www.google-analytics.com 
+      https://cdn.sanity.io;
+    style-src 'self' 'unsafe-inline' 
+      https://fonts.googleapis.com 
+      https://cdn.sanity.io;
+    img-src 'self' data: https: blob: 
+      https://cdn.sanity.io 
+      https://*.sanity.io
+      https://images.unsplash.com;
+    font-src 'self' 
+      https://fonts.gstatic.com 
+      https://cdn.sanity.io
+      data:;
+    connect-src 'self' 
+      https://*.google-analytics.com 
+      https://*.analytics.google.com 
+      https://*.googletagmanager.com 
+      https://vitals.vercel-insights.com 
+      https://cdn.sanity.io 
+      https://*.sanity.io 
+      https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '*'}.api.sanity.io
+      https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '*'}.apicdn.sanity.io
+      wss://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '*'}.api.sanity.io;
+    media-src 'self' data: https: blob: 
+      https://cdn.sanity.io 
+      https://*.sanity.io;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    block-all-mixed-content;
+    upgrade-insecure-requests;
+  `
       .replace(/\s+/g, ' ')
       .trim(),
   },
