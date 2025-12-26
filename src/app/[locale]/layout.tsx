@@ -11,23 +11,33 @@ import Footer from '@/components/layout/Footer/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+// Head is automatically handled by Next.js in the App Router
+
 // Preload critical CSS and fonts
 import '../globals.css';
 
 // Add preload for critical fonts
-const preloadFonts: Array<{
-  href: string;
-  as: string;
-  type: string;
-  crossOrigin: 'anonymous' | 'use-credentials' | '' | undefined;
-}> = [
+const preloadFonts = [
   {
     href: '/_next/static/media/europa-regular.woff2',
     as: 'font',
     type: 'font/woff2',
     crossOrigin: 'anonymous' as const,
   },
-  { href: '/_next/static/media/europa-bold.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' as const },
+  {
+    href: '/_next/static/media/europa-bold.woff2',
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous' as const,
+  },
+];
+
+// Domains to preconnect to
+const PRE_CONNECT_DOMAINS = [
+  'https://www.googletagmanager.com',
+  'https://www.google-analytics.com',
+  'https://fonts.googleapis.com',
+  'https://fonts.gstatic.com',
 ];
 
 export const viewport: Viewport = {
@@ -176,24 +186,24 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         {/* Preload critical resources */}
         <link rel="preload" href="/_next/static/media/hero-image.avif" as="image" fetchPriority="high" />
 
+        {/* Preconnect to external domains */}
+        {PRE_CONNECT_DOMAINS.map((domain) => (
+          <link key={domain} rel="preconnect" href={domain} crossOrigin="" />
+        ))}
+
         {/* Preload critical fonts */}
         {preloadFonts.map((font, index) => (
           <link
-            key={index}
+            key={`font-${index}`}
             rel="preload"
             href={font.href}
             as={font.as}
             type={font.type}
             crossOrigin={font.crossOrigin}
-            fetchPriority={index === 0 ? 'high' : 'auto'}
           />
         ))}
 
-        {/* Preconnect to external domains */}
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        {/* Preload critical CSS - handled by Next.js */}
 
         {/* Canonical and alternate URLs */}
         <link rel="canonical" href={canonicalUrl} />
@@ -202,8 +212,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <link rel="alternate" hrefLang="fr" href="https://monacofinancialsolution.com/fr" />
         <link rel="alternate" hrefLang="ru" href="https://monacofinancialsolution.com/ru" />
 
-        {/* Preload critical CSS */}
-        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+        {/* Critical CSS is handled by Next.js */}
 
         {/* Google Analytics - Load after critical content */}
 
