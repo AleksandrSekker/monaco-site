@@ -84,13 +84,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start">
               {/* Photo */}
               <div className="w-full lg:w-1/2">
-                <div className="relative w-full aspect-square lg:aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-xl">
+                <div className="relative w-full aspect-[3/4] lg:aspect-[3/4] rounded-2xl overflow-hidden bg-slate-100 shadow-xl">
                   <Image
                     src="/images/yurii-burba.jpg"
                     alt={content.name}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover object-top"
                   />
                 </div>
               </div>
