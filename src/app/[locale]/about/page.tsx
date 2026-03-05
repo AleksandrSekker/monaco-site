@@ -89,7 +89,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     src="/images/yurii-burba.jpg"
                     alt={content.name}
                     fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="100vw"
+                    quality={95}
+                    priority
+                    unoptimized
                   />
                 </div>
               </div>
