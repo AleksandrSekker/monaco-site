@@ -274,12 +274,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
                     <span className="text-lg font-semibold group-hover:scale-110">WA</span>
                   </a>
                 </div>
-
-                <div className="fixed bottom-4 right-4 z-50">
-                  <div className="animate-pulse-slow rounded-full bg-slate-900/95 px-4 py-2 text-xs text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-slate-800/95">
-                    Осталось <span className="font-bold text-red-300">5 мест</span> на декабрь–январь
-                  </div>
-                </div>
               </div>
             </FadeIn>
           </PageTransition>
